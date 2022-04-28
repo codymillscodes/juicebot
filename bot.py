@@ -10,6 +10,7 @@ import json
 import random
 import wikipediaapi as wiki
 import subprocess
+import memes
 from bs4 import BeautifulSoup
 from hurry.filesize import size
 
@@ -21,6 +22,7 @@ client = discord.Client()
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user.name}")
+    memes.memes_compile()
 
 #define commands
 wordlist_cats = ["!cat", "!catgif", "!neb", 'catfact']
@@ -32,6 +34,7 @@ wordlist_comp = ["!comp"]
 wordlist_weather = ["!weather"]
 wordlist_help = ['!help']
 wordlist_system = ["!restartbot", "!git-update"]
+wordlist_sa = ['!meme', '!cursed', '!funny']
 
 not_ready_magnets = []
 
@@ -95,6 +98,10 @@ async def on_message(message):
     #if str(message.channel.id) in config.discord_ignored_channel_ids: #Don't respond to these channel ids
         return
     em_footer = f"{message.author} | {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}" #default embed footer
+#sa stuff
+    if any(message.content.startswith(word) for word in wordlist_sa):
+        if message.content.startwith('!meme'):
+            await message.channel.send(memes.random_meme())
 #weather
     if any(message.content.startswith(word) for word in wordlist_weather):
         if(check_int(message.content[9:])):

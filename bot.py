@@ -171,10 +171,10 @@ async def on_message(message):
             if valid_group == 1:
                 if message.content.startswith('!restartbot'):
                     await log_channel.send(string_restartdiscord)
-                    subprocess.run('/home/pi/juicebot/scripts/restart.sh')
+                    subprocess.run('/home/pi/juicebot/scripts/restart.sh', shell=True)
                 elif message.content.startswith('!git-update'):
                     await log_channel.send(string_updatebot)
-                    subprocess.run('/home/pi/juicebot/scripts/update.sh')
+                    subprocess.run('/home/pi/juicebot/scripts/update.sh', shell=True)
             else:
                 await message.channel.send(string_no_restart)
 #debrid

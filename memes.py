@@ -23,7 +23,7 @@ def memes_compile():
     while("" in memes_array):
         memes_array.remove("")
 
-    np.savetxt('meme_links.txt', memes_array)
+ #   np.savetxt('meme_links.txt', memes_array)
 
 def random_meme():
     return random.choice(memes_array)

@@ -100,7 +100,7 @@ async def on_message(message):
     em_footer = f"{message.author} | {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}" #default embed footer
 #sa stuff
     if any(message.content.startswith(word) for word in wordlist_sa):
-        if message.content.startwith('!meme'):
+        if message.content.startswith('!meme'):
             await message.channel.send(memes.random_meme())
 #weather
     if any(message.content.startswith(word) for word in wordlist_weather):

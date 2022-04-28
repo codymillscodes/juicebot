@@ -14,9 +14,6 @@ from hurry.filesize import size
 
 print(config.discord_application_id)
 
-live_counter = 0
-status_links = []
-
 #define discord client
 client = discord.Client()
 
@@ -25,7 +22,7 @@ async def on_ready():
     print(f"Logged in as {client.user.name}")
 
 #define commands
-wordlist_cats = ["!cat", "!catgif", "!neb"]
+wordlist_cats = ["!cat", "!catgif", "!neb", 'catfact']
 wordlist_debrid = ["!search", "!status", '!lstatus']
 wordlist_waffle = ["!waffle"]
 wordlist_wiki = ["!wiki"]
@@ -34,8 +31,7 @@ wordlist_comp = ["!comp"]
 wordlist_weather = ["!weather"]
 wordlist_help = ['!help']
 
-log_channel = 967698346959568926
-dl_channel = 967969069108179044
+not_ready_magnets = []
 
 #wordlists for commands to use
 insult_words = {
@@ -62,9 +58,25 @@ def check_int(potential_int):
     except ValueError:
         return False
 
-# async def update_debrid_status():
-#     config.live_counter, config.status_links = debrid.live_status(config.live_counter)
-#     await asyncio.sleep(10)
+async def update_debrid_status():
+    await client.wait_until_ready()
+    while not client.is_closed():
+        if len(not_ready_magnets) > 0:
+            for magnet in not_ready_magnets:
+                status = debrid.get_status(magnet_id=magnet)
+                if status == 'ready':
+                    filez = debrid.build_link_info(magnet)
+                    em_links = discord.Embed()
+                    #em_links.set_footer(text=em_footer)
+                    for info in filez:
+                        em_links.add_field(name=info["name"],value=f"{info['link']} | size: {info['size']}",inline=False)
+                    dl_channel = client.get_channel(config.dl_channel)
+                    not_ready_magnets.remove(magnet)
+                    await dl_channel.send(embed=em_links)
+                elif status == 404:
+                    not_ready_magnets.remove(magnet)
+        await asyncio.sleep(10)
+
 
 # start event listener
 @client.event
@@ -89,12 +101,8 @@ async def on_message(message):
         em_weather.description = f"Temp: {weather['main']['temp']}F | {weather['weather'][0]['description']}\nWind: {weather['wind']['speed']} | Humidity: {weather['main']['humidity']}%"
         await message.channel.send(embed=em_weather)
 #cats
-    if any(message.content.startswith(word) for word in wordlist_cats):
-        if message.content.startswith('!cat'):
-            cat_search = f"https://api.thecatapi.com/v1/images/search?api_key={config.cat_auth}"
-            cat_pic = json.loads(requests.get(cat_search).text)[0]["url"]
-            await message.channel.send(cat_pic)
-        elif message.content.startswith('!neb'):
+    if any(message.content.startswith(word) for word in wordlist_cats): 
+        if message.content.startswith('!neb'):
             cat_search = f"https://api.thecatapi.com/v1/images/search?breed_ids=nebe&api_key={config.cat_auth}"
             cat_pic = json.loads(requests.get(cat_search).text)[0]["url"]
             await message.channel.send(cat_pic)
@@ -102,10 +110,17 @@ async def on_message(message):
             cat_search = f"https://api.thecatapi.com/v1/images/search?mime_types=gif&api_key={config.cat_auth}"
             cat_pic = json.loads(requests.get(cat_search).text)[0]["url"]
             await message.channel.send(cat_pic)
+        elif message.content.startswith('!catfact'):
+            cat_fact = json.loads(requests.get('https://meowfacts.herokuapp.com').text)["data"]
+            fact = ((str(cat_fact)).strip("'[]'"))
+            await message.channel.send(fact)
+        elif message.content.startswith('!cat'):
+            cat_search = f"https://api.thecatapi.com/v1/images/search?api_key={config.cat_auth}"
+            cat_pic = json.loads(requests.get(cat_search).text)[0]["url"]
+            await message.channel.send(cat_pic)
 #random waffle command
     if any(message.content.startswith(word) for word in wordlist_waffle):
         waffles = 'https://randomwaffle.gbs.fm/'
-        #html_page = requests.get(waffles)
         image = BeautifulSoup(requests.get(waffles).content, 'html.parser').find('img').attrs['src']
         await message.channel.send(waffles+image)
 #insults
@@ -140,66 +155,64 @@ async def on_message(message):
             await message.channel.send("Pretty sure you made that up.")
 #debrid
     if any(message.content.startswith(word) for word in wordlist_debrid):
+        if message.content.startswith('!status'):
+            magnet_status = debrid.get_status(all = True)
+            if len(magnet_status['magnets']) > 0:
+                #print(magnet_status['magnets'])
+                #print(type(magnet_status['magnets']))
+                em_status = discord.Embed()
+                em_status.set_footer(text=em_footer)
+                for magnet in magnet_status['magnets']:
+                    if magnet['downloaded'] <= 0:
+                        percent = 0
+                    else:
+                        percent = f"{'{0:.2f}'.format(100 * magnet['downloaded'] / magnet['size'])}"               
+                    em_status.add_field(name=magnet['filename'], value=f"{percent}% | {magnet['status']} | Size: {size(magnet['size'])} | Speed: {size(magnet['downloadSpeed'])} | Seeders: {magnet['seeders']}", inline=False)
+                await message.channel.send(embed=em_status)
+            else:
+                await message.channel.send('No active torrents, bud.')
+    if any(message.content.startswith(word) for word in wordlist_debrid):
         if message.content.startswith('!search'):
             results = debrid.search1337(message.content[8:])['items'][:5]
-            em_result = discord.Embed()
-            em_result.set_footer(text=em_footer)
-            x=1
-            for torrent in results:
-                result_name = torrent["name"]
-                result_value = f"Seeders: {torrent['seeders']} | Leechers: {torrent['leechers']} | Size: {torrent['size']}"
-                em_result.add_field(name=f"{x}. {result_name}", value=result_value, inline=False)
-                x = x + 1
-            em_result.add_field(name="----------------",value="You should pick the one with the most seeders and a reasonable filesize. Pay attention to the quality. You dont want a cam or TS.\n*$pick 1-5*",inline=False,)
-            await message.channel.send(embed=em_result)
+            if len(results) > 0:
+                em_result = discord.Embed()
+                em_result.set_footer(text=em_footer)
+                x=1
+                for torrent in results:
+                    result_name = torrent["name"]
+                    result_value = f"Seeders: {torrent['seeders']} | Leechers: {torrent['leechers']} | Size: {torrent['size']}"
+                    em_result.add_field(name=f"{x}. {result_name}", value=result_value, inline=False)
+                    x = x + 1
+                em_result.add_field(name="----------------",value="You should pick the one with the most seeders and a reasonable filesize. Pay attention to the quality. You dont want a cam or TS.\n*!pick 1-5*",inline=False,)
+                await message.channel.send(embed=em_result)
 
-            def check(m):
-                return m.author == message.author and m.content.startswith("!pick")
-            try:
-                msg = await client.wait_for("message", check=check, timeout=60)
-                pick = int(msg.content[6:])-1
-                if int(msg.content[6:]) > 5 or pick < 0:
-                    await message.channel.send("WRONG")
-                else:
-                    magnet_link = debrid.magnet_info(results[pick]["torrentId"])
-                    ready_bool, name, magnet_id = debrid.add_magnet(magnet_link)
-                    if ready_bool:
-                        filez = debrid.build_link_info(magnet_id)
-                        em_links = discord.Embed(description=f"{message.author.mention}")
-                        em_links.set_footer(text=em_footer)
-                        for info in filez:
-                            em_links.add_field(name=info["name"],value=f"{info['link']} | size: {info['size']}",inline=False)
-                        await message.channel.send(embed=em_links)
+                def check(m):
+                    return m.author == message.author and m.content.startswith("!pick")
+                try:
+                    msg = await client.wait_for("message", check=check, timeout=60)
+                    pick = int(msg.content[6:])-1
+                    if int(msg.content[6:]) > 5 or pick < 0:
+                        await message.channel.send("WRONG")
                     else:
-                        await message.channel.send("It aint ready. Try !status.")
-            except asyncio.TimeoutError:
-                await message.channel.send("TOO SLOW")
-        # if message.content.startswith('!lstatus'):
-        #     em_lstatus = discord.Embed()
-        #     em_lstatus.set_footer(text=em_footer)
-        #     for torrent in status_links:
-        #         if torrent['downloaded'] == 0 or round(100 * torrent['downloaded'] / torrent['size']) < 0:
-        #                 percent = 0
-        #         else:
-        #             percent = f"{'{0:.2f}'.format(100 * torrent['downloaded'] / torrent['size'])}"
-        #             em_lstatus.add_field(name=torrent['filename'], value=f"({percent})% | {torrent['status']} | Size: {size(torrent['size'])} | Speed: {size(torrent['downloadSpeed'])} | Seeders: {torrent['seeders']}")
-        #         await message.channel.send(embed=em_lstatus)
-        # if message.content.startswith('!status'):
-        #     status = debrid.get_status()
-        #     print(status)
-        #     if len(status['magnets']) <= 0:
-        #         await message.channel.send("No active torrents.")
-        #     else:
-        #         em_status = discord.Embed()
-        #         em_status.set_footer(text=em_footer)
-        #         for torrent in status['magnets']:
-        #             if torrent['downloaded'] == 0 or round(100 * torrent['downloaded'] / torrent['size']) <= 0:
-        #                 percent = 0
-        #             else:
-        #                 percent = f"{'{0:.2f}'.format(100 * torrent['downloaded'] / torrent['size'])}"
-        #             em_status.add_field(name=torrent['filename'], value=f"({percent})% | {torrent['status']} | Size: {size(int(torrent['size']))} | Speed: {size(torrent['downloadSpeed'])} | Seeders: {torrent['seeders']}")
-        #         await message.channel.send(embed=em_status)
+                        magnet_link = debrid.magnet_info(results[pick]["torrentId"])
+                        ready_bool, name, magnet_id = debrid.add_magnet(magnet_link)
+                        if ready_bool:
+                            filez = debrid.build_link_info(magnet_id)
+                            em_links = discord.Embed(description=f"{message.author.mention}")
+                            em_links.set_footer(text=em_footer)
+                            for info in filez:
+                                em_links.add_field(name=info["name"],value=f"{info['link']} | size: {info['size']}",inline=False)
+                            dl_channel = client.get_channel(config.dl_channel)
+                            await dl_channel.send(embed=em_links)
+                        else:
+                            not_ready_magnets.append(magnet_id)
+                            await message.channel.send("It aint ready. Try !status.")
+                except asyncio.TimeoutError:
+                    await message.channel.send("TOO SLOW")
 
-#client.loop.create_task(update_debrid_status())
+            else:
+                await message.channel.send("zero zero zero sesam street sesam street zero zero zero")
+
+client.loop.create_task(update_debrid_status())
 
 client.run(config.discord_bot_token)

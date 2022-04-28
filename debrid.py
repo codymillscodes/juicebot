@@ -47,26 +47,18 @@ def search1337(query):
 def magnet_info(torrent_id):
     return torrents.info(torrentId=torrent_id)['magnetLink']
 
-def get_status():
-    return json.loads(requests.get(debrid_url('magnet', 'status', 'status=active')).text)['data']
-
-# def live_status(counter):
-#     url = debrid_url('magnet', 'status', f'session={config.debrid_session}&counter={counter}')
-#     live_status = json.loads(requests.get(url).text)["data"]
-#     link_info = {}
-#     counter = live_status["counter"]
-
-#     if len(live_status['magnets']) <= 0:
-#         return False
-#     else:
-#         updates = {}
-#         for link in live_status["magnets"][:10]:
-#             updates["id"] = link["id"] 
-#             updates["downloaded"] = link["downloaded"] 
-#             updates["dl_speed"] = link["downloadSpeed"]
-#             print(updates)
-#     link_info.update(updates)
-#     print("link_info")
-#     print(link_info)
-
-#     return counter, link_info
+def get_status(magnet_id=0, all=False):
+    if all:
+        return json.loads(requests.get(debrid_url('magnet', 'status', 'status=active')).text)['data']
+    else:    
+        magnet_json = json.loads(requests.get(debrid_url('magnet', 'status', f'id={magnet_id}')).text)
+        if 'data' in magnet_json.keys():
+            if magnet_json['data']['magnets']['status'].lower() == 'ready':
+                status = 'ready'
+                return status
+            else:
+                status = 'not ready'
+                return status
+        else:
+            status = 404
+            return status

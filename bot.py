@@ -9,6 +9,7 @@ import requests
 import json
 import random
 import wikipediaapi as wiki
+import subprocess
 from bs4 import BeautifulSoup
 from hurry.filesize import size
 
@@ -30,9 +31,15 @@ wordlist_insult = ["!insult"]
 wordlist_comp = ["!comp"]
 wordlist_weather = ["!weather"]
 wordlist_help = ['!help']
+wordlist_system = ["!restartbot", "!git-update"]
 
 not_ready_magnets = []
 
+list_roles_system = ['967697785304526879']
+
+string_restartdiscord = "Restarting myself..."
+string_updatebot = "Pulling from git and restarting..."
+string_no_restart= "Ask an adult for permission."
 #wordlists for commands to use
 insult_words = {
             'A': ['a confoundedly', 'a conspicuously', 'a cruelly', 'a deucedly', 'a devilishly', 'a dreadfully', 'a frightfully', 'a grievously', 'a lamentably', 'a miserably', 'a monstrously', 'a piteously', 'a precociously', 'a preposterously', 'a shockingly', 'a sickly', 'a wickedly', 'a woefully', 'an abominably', 'an egregiously', 'an incalculably', 'an indescribably', 'an ineffably', 'an irredeemably', 'an outrageously', 'an unconscionably', 'an unequivocally', 'an unutterably'],
@@ -153,6 +160,23 @@ async def on_message(message):
             await message.channel.send(embed=wiki_embed)
         else:
             await message.channel.send("Pretty sure you made that up.")
+#system commands
+    #Restart stuff
+        if any(message.content.startswith(word) for word in wordlist_system):
+            valid_group = 0
+            log_channel = client.get_channel(config.log_channel)
+            for role in message.author.roles:
+                    if str(role.id) in list_roles_system: #Needed role to restart shit
+                        valid_group = 1
+            if valid_group == 1:
+                if message.content.startswith('!restartbot'):
+                    await log_channel.send(string_restartdiscord)
+                    subprocess.run('/home/pi/juicebot/scripts/restart.sh')
+                elif message.content.startswith('!git-update'):
+                    await log_channel.send(string_updatebot)
+                    subprocess.run('/home/pi/juicebot/scripts/update.sh')
+            else:
+                await message.channel.send(string_no_restart)
 #debrid
     if any(message.content.startswith(word) for word in wordlist_debrid):
         if message.content.startswith('!status'):

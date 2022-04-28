@@ -162,21 +162,21 @@ async def on_message(message):
             await message.channel.send("Pretty sure you made that up.")
 #system commands
     #Restart stuff
-        if any(message.content.startswith(word) for word in wordlist_system):
-            valid_group = 0
-            log_channel = client.get_channel(config.log_channel)
-            for role in message.author.roles:
-                    if str(role.id) in list_roles_system: #Needed role to restart shit
-                        valid_group = 1
-            if valid_group == 1:
-                if message.content.startswith('!restartbot'):
-                    await log_channel.send(string_restartdiscord)
-                    subprocess.run('/home/pi/juicebot/scripts/restart.sh', shell=True)
-                elif message.content.startswith('!git-update'):
-                    await log_channel.send(string_updatebot)
-                    subprocess.run('/home/pi/juicebot/scripts/update.sh', shell=True)
-            else:
-                await message.channel.send(string_no_restart)
+    if any(message.content.startswith(word) for word in wordlist_system):
+        valid_group = 0
+        log_channel = client.get_channel(config.log_channel)
+        for role in message.author.roles:
+                if str(role.id) in list_roles_system: #Needed role to restart shit
+                    valid_group = 1
+        if valid_group == 1:
+            if message.content.startswith('!restartbot'):
+                await log_channel.send(string_restartdiscord)
+                subprocess.run('/home/pi/juicebot/scripts/restart.sh', shell=True)
+            elif message.content.startswith('!git-update'):
+                await log_channel.send(string_updatebot)
+                subprocess.run('/home/pi/juicebot/scripts/update.sh', shell=True)
+        else:
+            await message.channel.send(string_no_restart)
 #debrid
     if any(message.content.startswith(word) for word in wordlist_debrid):
         if message.content.startswith('!status'):

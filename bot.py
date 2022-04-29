@@ -39,7 +39,7 @@ wordlist_weather = ["!weather"]
 wordlist_help = ['!help']
 wordlist_system = ["!restartbot", "!git-update"]
 wordlist_sa = ['!meme', '!curse', '!funny', '!cute']
-
+wordlist_dumbshit = ['!stock raytheon']
 not_ready_magnets = []
 
 list_roles_system = ['967697785304526879']
@@ -103,6 +103,10 @@ async def on_message(message):
     #if str(message.channel.id) in config.discord_ignored_channel_ids: #Don't respond to these channel ids
         return
     em_footer = f"{message.author} | {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}" #default embed footer
+#barf
+    if any(message.content.startswith(word) for word in wordlist_dumbshit):
+        if message.content.startswith('!stock raytheon'):
+            await message.channel.send('net profit: $420,420.69')
 #sa stuff
     if any(message.content.startswith(word) for word in wordlist_sa):
         if message.content.startswith('!meme'):

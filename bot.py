@@ -11,6 +11,7 @@ import random
 import wikipediaapi as wiki
 import subprocess
 import memes
+import recipe
 from bs4 import BeautifulSoup
 from hurry.filesize import size
 
@@ -28,6 +29,7 @@ async def on_ready():
 waffle_emoji = '\N{WAFFLE}'
 #define commands
 wordlist_cats = ["!cat", "!catgif", "!neb", 'catfact']
+wordlist_dogs = ['!dog']
 wordlist_debrid = ["!search", "!status", '!lstatus']
 wordlist_waffle = ["!waffle", f"!{waffle_emoji}", f"!{':w:'}"]
 wordlist_wiki = ["!wiki"]
@@ -141,6 +143,11 @@ async def on_message(message):
             cat_search = f"https://api.thecatapi.com/v1/images/search?api_key={config.cat_auth}"
             cat_pic = json.loads(requests.get(cat_search).text)[0]["url"]
             await message.channel.send(cat_pic)
+#dog
+    if any(message.content.startswith(word) for word in wordlist_dogs):
+        dog_search = f"https://api.thedogapi.com/v1/images/search?api_key={config.dog_auth}"
+        dog_pic = json.loads(requests.get(dog_search).text)[0]["url"]
+        await message.channel.send(dog_pic)
 #random waffle command
     if any(message.content.startswith(word) for word in wordlist_waffle):
         waffles = 'https://randomwaffle.gbs.fm/'
@@ -211,7 +218,6 @@ async def on_message(message):
                 await message.channel.send(embed=em_status)
             else:
                 await message.channel.send('No active torrents, bud.')
-    if any(message.content.startswith(word) for word in wordlist_debrid):
         if message.content.startswith('!search'):
             results = debrid.search1337(message.content[8:])['items'][:5]
             if len(results) > 0:

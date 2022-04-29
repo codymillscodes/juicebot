@@ -104,13 +104,13 @@ async def on_message(message):
 #sa stuff
     if any(message.content.startswith(word) for word in wordlist_sa):
         if message.content.startswith('!meme'):
-            await message.channel.send(memes.random_meme)
+            await message.channel.send(memes.random_meme())
         if message.content.startswith('!funny'):
-            await message.channel.send(memes.random_funny)
+            await message.channel.send(memes.random_funny())
         if message.content.startswith('!curse'):
-            await message.channel.send(memes.random_curse)
+            await message.channel.send(memes.random_curse())
         if message.content.startswith('!cute'):
-            await message.channel.send(memes.random_cute)
+            await message.channel.send(memes.random_cute())
 #weather
     if any(message.content.startswith(word) for word in wordlist_weather):
         if(check_int(message.content[9:])):

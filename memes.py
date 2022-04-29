@@ -13,19 +13,25 @@ def sa_url(thread, page = 0, sa_token=config.sa_token):
 def random_img(thread):
     response = requests.get(sa_url(thread))
     response.raise_for_status()
-    img_json = response.json()
-    total_pages = int(img_json['total_pages'])
+
+    img_json_1 = response.json()
+    total_pages = int(img_json_1['total_pages'])
+
     random_page_int = rand.randrange(total_pages+1)
+
     response = requests.get(sa_url(thread, random_page_int))
-    img_json = response
+    img_json = response.json()
     img_array = []
-    for post in img_json:
-        images = img_json[f'{post}']['imgs']
-        img_array.append(images)
+    try:
+        for post in img_json:
+            images = img_json[f'{post}']['imgs']
+            img_array.append(images)
+    except (TypeError):
+        pass
     while("" in img_array):
         img_array.remove("")
     
-    return str(rand.randomchoice(img_array))
+    return rand.choice(img_array)
 def random_meme():
     return random_img(3813092)
 def random_funny():

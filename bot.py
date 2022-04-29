@@ -10,7 +10,7 @@ import json
 import random
 import wikipediaapi as wiki
 import subprocess
-#import memes
+import memes
 from bs4 import BeautifulSoup
 from hurry.filesize import size
 
@@ -36,7 +36,7 @@ wordlist_comp = ["!comp"]
 wordlist_weather = ["!weather"]
 wordlist_help = ['!help']
 wordlist_system = ["!restartbot", "!git-update"]
-#wordlist_sa = ['!meme', '!cursed', '!funny']
+wordlist_sa = ['!meme', '!cursed', '!funny', '!cute']
 
 not_ready_magnets = []
 
@@ -102,9 +102,15 @@ async def on_message(message):
         return
     em_footer = f"{message.author} | {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}" #default embed footer
 #sa stuff
-    # if any(message.content.startswith(word) for word in wordlist_sa):
-    #     if message.content.startswith('!meme'):
-    #         await message.channel.send(memes.random_meme())
+    if any(message.content.startswith(word) for word in wordlist_sa):
+        if message.content.startswith('!meme'):
+            await message.channel.send(memes.random_meme)
+        if message.content.startswith('!funny'):
+            await message.channel.send(memes.random_funny)
+        if message.content.startswith('!curse'):
+            await message.channel.send(memes.random_curse)
+        if message.content.startswith('!cute'):
+            await message.channel.send(memes.random_cute)
 #weather
     if any(message.content.startswith(word) for word in wordlist_weather):
         if(check_int(message.content[9:])):

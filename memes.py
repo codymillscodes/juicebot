@@ -25,7 +25,7 @@ def random_img(thread):
     while("" in img_array):
         img_array.remove("")
     
-    return rand.randomchoice(img_array)
+    return str(rand.randomchoice(img_array))
 def random_meme():
     return random_img(3813092)
 def random_funny():

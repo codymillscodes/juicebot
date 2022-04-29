@@ -36,7 +36,7 @@ wordlist_comp = ["!comp"]
 wordlist_weather = ["!weather"]
 wordlist_help = ['!help']
 wordlist_system = ["!restartbot", "!git-update"]
-wordlist_sa = ['!meme', '!cursed', '!funny', '!cute']
+wordlist_sa = ['!meme', '!curse', '!funny', '!cute']
 
 not_ready_magnets = []
 

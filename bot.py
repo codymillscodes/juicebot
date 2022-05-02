@@ -20,7 +20,6 @@ print(config.discord_application_id)
 
 #define discord client
 client = discord.Client()
-log_channel = ''
 
 @client.event
 async def on_ready():
@@ -97,6 +96,7 @@ async def update_debrid_status():
 # start event listener
 @client.event
 async def on_message(message):
+    log_channel = client.get_channel(config.log_channel)
     if message.author == client.user: #Don't respond to my own messages
         return
     em_footer = f"{message.author} | {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}" #default embed footer

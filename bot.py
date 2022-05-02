@@ -20,12 +20,13 @@ print(config.discord_application_id)
 
 #define discord client
 client = discord.Client()
-
+log_channel = ''
 
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user.name}")
-    #await log_channel.send("[BOT ACTIVATED]")
+    log_channel = client.get_channel(config.log_channel)
+    await log_channel.send("[BOT ACTIVATED]")
 
 waffle_emoji = '\N{WAFFLE}'
 #define commands
@@ -39,7 +40,7 @@ wordlist_comp = ["!comp"]
 wordlist_weather = ["!weather"]
 wordlist_help = ['!help']
 wordlist_system = ["!restartbot", "!git-update"]
-wordlist_sa = ['!meme', '!curse', '!funny', '!cute']
+wordlist_sa = ['!meme', '!curse', '!funny', '!cute', '!osha', '!badfood', '!schad']
 not_ready_magnets = []
 
 list_roles_system = ['967697785304526879']
@@ -112,13 +113,19 @@ async def on_message(message):
 #sa stuff
     if any(message.content.startswith(word) for word in wordlist_sa):
         if message.content.startswith('!meme'):
-            await message.channel.send(memes.random_meme())
+            await message.channel.send(memes.random_meme(3813092))
         if message.content.startswith('!funny'):
-            await message.channel.send(memes.random_funny())
+            await message.channel.send(memes.random_funny(3811995))
         if message.content.startswith('!curse'):
-            await message.channel.send(memes.random_curse())
+            await message.channel.send(memes.random_curse(3833370))
         if message.content.startswith('!cute'):
-            await message.channel.send(memes.random_cute())
+            await message.channel.send(memes.random_cute(3769444))
+        if message.content.startswith('!osha'):
+            await message.channel.send(memes.random_osha(3904642))
+        if message.content.startswith('!badfood'):
+            await message.channel.send(memes.random_badfood(3959162))
+        if message.content.startswith('!schad'):
+            await message.channel.send(memes.random_schad(3897718))
 #weather
     if any(message.content.startswith(word) for word in wordlist_weather):
         if(check_int(message.content[9:])):
@@ -217,7 +224,7 @@ async def on_message(message):
 #system commands
     #Restart stuff
     if any(message.content.startswith(word) for word in wordlist_system):
-        log_channel = client.get_channel(config.log_channel)
+        #log_channel = client.get_channel(config.log_channel)
         valid_group = 0
         for role in message.author.roles:
                 if str(role.id) in list_roles_system: #Needed role to restart shit

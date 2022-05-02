@@ -27,11 +27,5 @@ def random_img(thread):
             images.append(tag['src'])
     return random.choice(images)
 
-def random_meme():
-    return random_img(3813092)
-def random_funny():
-    return random_img(3811995)
-def random_curse():
-    return random_img(3833370)
-def random_cute():
-    return random_img(3769444)
+def random_meme(thread):
+    return random_img(thread)

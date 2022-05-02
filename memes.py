@@ -27,7 +27,8 @@ def random_img(thread):
             images.append(tag['src'])
     if len(images = 0):
         random_img(thread)
-    return random.choice(images)
+    else:
+        return random.choice(images)
 
 def random_meme(thread):
     return random_img(thread)

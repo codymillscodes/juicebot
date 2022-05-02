@@ -138,6 +138,7 @@ async def on_message(message):
         em_weather.set_author(name=weather['name'])
         em_weather.description = f"Temp: {weather['main']['temp']}F | {weather['weather'][0]['description']}\nWind: {weather['wind']['speed']} | Humidity: {weather['main']['humidity']}%"
         await message.channel.send(embed=em_weather)
+
 #cats
     if any(message.content.startswith(word) for word in wordlist_cats): 
         if message.content.startswith('!neb'):

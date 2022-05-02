@@ -3,3 +3,4 @@ __pycache__/
 scripts/
 cache.sqlite
 config.py
+access_token.txt

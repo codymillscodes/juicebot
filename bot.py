@@ -11,6 +11,7 @@ import random
 import wikipediaapi as wiki
 import subprocess
 import memes
+import tv_movies
 import recipe
 from bs4 import BeautifulSoup
 from hurry.filesize import size
@@ -32,14 +33,13 @@ wordlist_cats = ["!cat", "!catgif", "!neb", 'catfact']
 wordlist_dogs = ['!dog']
 wordlist_debrid = ["!search", "!status", '!lstatus']
 wordlist_waffle = ["!waffle", f"!{waffle_emoji}", f"!{':w:'}"]
-wordlist_wiki = ["!wiki"]
+wordlist_search = ["!wiki", "!movie", "!tv"]
 wordlist_insult = ["!insult"]
 wordlist_comp = ["!comp"]
 wordlist_weather = ["!weather"]
 wordlist_help = ['!help']
 wordlist_system = ["!restartbot", "!git-update"]
 wordlist_sa = ['!meme', '!curse', '!funny', '!cute']
-wordlist_dumbshit = ['!stock raytheon']
 not_ready_magnets = []
 
 list_roles_system = ['967697785304526879']
@@ -98,15 +98,17 @@ async def update_debrid_status():
 async def on_message(message):
     if message.author == client.user: #Don't respond to my own messages
         return
-    #if str(message.author.id) in config.discord_ignored_ids: #Don't respond to these user ids
-        return
-    #if str(message.channel.id) in config.discord_ignored_channel_ids: #Don't respond to these channel ids
-        return
     em_footer = f"{message.author} | {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}" #default embed footer
-#barf
-    if any(message.content.startswith(word) for word in wordlist_dumbshit):
-        if message.content.startswith('!stock raytheon'):
-            await message.channel.send('net profit: $420,420.69')
+    #if str(message.author.id) in config.discord_ignored_ids: #Don't respond to these user ids
+        #return
+    #if str(message.channel.id) in config.discord_ignored_channel_ids: #Don't respond to these channel ids
+        #return
+    if any(message.content.startswith(word) for word in wordlist_help):
+        em_help = discord.Embed()
+        em_help.set_author(name="Help!")
+        em_help.set_footer(text=em_footer)
+        em_help.add_field(name="COMMANDS!", value="!search - Search for a torrent\n!status - which torrents are actively downloading?\n!cat, !catgif, !neb, !catfact - CATS!\n!waffle - roll the dice\n!wiki for wikipedia\n!movie for a movie search\n!tv for tv shows\n!insult, !comp - insult and compliment your subordinates\n!weather cause why not\n!meme, !curse, !funny, !cute - a bit buggy but MEMES!")
+        await message.channel.send(embed=em_help)
 #sa stuff
     if any(message.content.startswith(word) for word in wordlist_sa):
         if message.content.startswith('!meme'):
@@ -175,18 +177,43 @@ async def on_message(message):
         d = random.choice(praise['C'])
         
         await message.channel.send(f"{message.content[6:]}, you {b.lower()}, {d.lower()} and {c.lower()} {a.lower()}.")
-#wiki
-    if any(message.content.startswith(word) for word in wordlist_wiki):
-        wiki_search = wiki.Wikipedia('en')
-        page = wiki_search.page(f'{message.content[6:]}')
+#searchin stuff
+    if any(message.content.startswith(word) for word in wordlist_search):
+        if message.content.startswith('!wiki'):
+            wiki_search = wiki.Wikipedia('en')
+            page = wiki_search.page(f'{message.content[6:]}')
 
-        if page.exists():
-            wiki_embed = discord.Embed()
-            wiki_embed.set_footer(text=em_footer)
-            wiki_embed.description = f"[**{page.title}**]({page.fullurl})\n{page.summary[0:500]}..."
-            await message.channel.send(embed=wiki_embed)
-        else:
-            await message.channel.send("Pretty sure you made that up.")
+            if page.exists():
+                wiki_embed = discord.Embed()
+                wiki_embed.set_footer(text=em_footer)
+                wiki_embed.description = f"[**{page.title}**]({page.fullurl})\n{page.summary[0:500]}..."
+                await message.channel.send(embed=wiki_embed)
+            else:
+                await message.channel.send("Pretty sure you made that up.")
+        if message.content.startswith('!movie'):
+            results = tv_movies.get_movie_info(message.content[7:])
+            if results == 0:
+                print(message.content[8:])
+                await message.channel.send("No results. You must've typed random shit.")
+            else:
+                movie = results[0]
+                em_movie = discord.Embed(description=movie.overview)
+                em_movie.set_footer(text=f"{movie.genres[0].name}, {movie.genres[1].name} | {movie.original_language} | {movie.vote_average}% ({movie.vote_count})")
+                em_movie.set_author(name=f"{movie.title} ({movie.release_date.year})", url="https://www.imdb.com/title/"+movie.imdb_id)
+                em_movie.set_thumbnail(url=movie.poster_url)
+                await message.channel.send(embed=em_movie)
+
+        if message.content.startswith('!tv'):
+            results = tv_movies.get_tv_info(message.content[4:])
+            if results == 0:
+                await message.channel.send("No results. You must've typed random shit.")
+            else:
+                tv = results[0]
+                em_tv = discord.Embed(description=tv.overview)
+                em_tv.set_footer(text=f"{tv.genres[0].name}, {tv.genres[1].name} | {tv.vote_average}% ({tv.vote_count})")
+                em_tv.set_author(name=f"{tv.title} ({tv.first_air_date.year})", url="https://www.imdb.com/title/"+tv.imdb_id)
+                em_tv.set_thumbnail(url=tv.poster_url)
+                await message.channel.send(embed=em_tv)
 #system commands
     #Restart stuff
     if any(message.content.startswith(word) for word in wordlist_system):

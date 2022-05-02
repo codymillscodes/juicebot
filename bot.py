@@ -20,7 +20,7 @@ print(config.discord_application_id)
 
 #define discord client
 client = discord.Client()
-#log_channel = client.get_channel(config.log_channel)
+
 
 @client.event
 async def on_ready():
@@ -217,6 +217,7 @@ async def on_message(message):
 #system commands
     #Restart stuff
     if any(message.content.startswith(word) for word in wordlist_system):
+        log_channel = client.get_channel(config.log_channel)
         valid_group = 0
         for role in message.author.roles:
                 if str(role.id) in list_roles_system: #Needed role to restart shit
@@ -224,10 +225,10 @@ async def on_message(message):
         if valid_group == 1:
             if message.content.startswith('!restartbot'):
                 await log_channel.send(string_restartdiscord)
-                subprocess.run('/home/pi/juicebot/scripts/restart.sh', shell=True)
+                subprocess.run('/waffle/scripts/restart.sh', shell=True)
             elif message.content.startswith('!git-update'):
                 await log_channel.send(string_updatebot)
-                subprocess.run('/home/pi/juicebot/scripts/update.sh', shell=True)
+                subprocess.run('/waffle/scripts/update.sh', shell=True)
         else:
             await message.channel.send(string_no_restart)
 #debrid

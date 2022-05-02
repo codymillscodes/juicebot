@@ -115,17 +115,17 @@ async def on_message(message):
         if message.content.startswith('!meme'):
             await message.channel.send(memes.random_meme(3813092))
         if message.content.startswith('!funny'):
-            await message.channel.send(memes.random_funny(3811995))
+            await message.channel.send(memes.random_meme(3811995))
         if message.content.startswith('!curse'):
-            await message.channel.send(memes.random_curse(3833370))
+            await message.channel.send(memes.random_meme(3833370))
         if message.content.startswith('!cute'):
-            await message.channel.send(memes.random_cute(3769444))
+            await message.channel.send(memes.random_meme(3769444))
         if message.content.startswith('!osha'):
-            await message.channel.send(memes.random_osha(3904642))
+            await message.channel.send(memes.random_meme(3904642))
         if message.content.startswith('!badfood'):
-            await message.channel.send(memes.random_badfood(3959162))
+            await message.channel.send(memes.random_meme(3959162))
         if message.content.startswith('!schad'):
-            await message.channel.send(memes.random_schad(3897718))
+            await message.channel.send(memes.random_meme(3897718))
 #weather
     if any(message.content.startswith(word) for word in wordlist_weather):
         if(check_int(message.content[9:])):

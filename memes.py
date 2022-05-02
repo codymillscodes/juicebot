@@ -25,7 +25,7 @@ def random_img(thread):
             continue
         else:
             images.append(tag['src'])
-    if len(images = 0):
+    if len(images) == 0:
         random_img(thread)
     else:
         return random.choice(images)

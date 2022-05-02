@@ -20,11 +20,11 @@ print(config.discord_application_id)
 
 #define discord client
 client = discord.Client()
+log_channel = client.get_channel(config.log_channel)
 
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user.name}")
-    log_channel = client.get_channel(config.log_channel)
     await log_channel.send("[BOT ACTIVATED]")
 
 waffle_emoji = '\N{WAFFLE}'

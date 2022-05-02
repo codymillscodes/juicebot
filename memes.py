@@ -1,37 +1,29 @@
-import config
-import random as rand
+from bs4 import BeautifulSoup as bs
+from bs4 import SoupStrainer
 import requests
+import random
 
-memes_array = []
-
-def sa_url(thread, page = 0, sa_token=config.sa_token):
+def sa_url(thread, page = 0):
     if page > 0:
-        return (f'https://api.fyad.club/threaddata/{thread}?token={sa_token}&page={page}')
+        return f"https://forums.somethingawful.com/showthread.php?threadid={thread}&userid=0&perpage=40&pagenumber={page}"
     else:
-        return (f'https://api.fyad.club/threaddata/{thread}?token={sa_token}')
+        return f"https://forums.somethingawful.com/showthread.php?threadid={thread}&userid=0&perpage=40&pagenumber=1"
+def get_random_page(thread):
+    r = requests.get(sa_url(thread))
+    soup = bs(r.text, features="html.parser")
+    pages = int(soup.find(class_="pages top").find(title="Last page").string[:4])
+    return random.randint(1, pages)
 
 def random_img(thread):
-    response = requests.get(sa_url(thread))
-    response.raise_for_status()
+    r = requests.get(sa_url(thread, get_random_page(thread)))
+    posts = SoupStrainer(class_='postbody')
+    soup = bs(r.text, parse_only=posts, features="html.parser")
+    #for tag in posts.find_all:
+    images = []
+    for tag in soup.find_all('img'):
+        images.append(tag['src'])
+    return random.choice(images)
 
-    img_json_1 = response.json()
-    total_pages = int(img_json_1['total_pages'])
-
-    random_page_int = rand.randrange(total_pages+1)
-
-    response = requests.get(sa_url(thread, random_page_int))
-    img_json = response.json()
-    img_array = []
-    try:
-        for post in img_json:
-            images = img_json[f'{post}']['imgs']
-            img_array.append(images)
-    except (TypeError):
-        pass
-    while("" in img_array):
-        img_array.remove("")
-    
-    return rand.choice(img_array)
 def random_meme():
     return random_img(3813092)
 def random_funny():

@@ -24,8 +24,8 @@ client = discord.Client()
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user.name}")
-
-
+    log_channel = client.get_channel(config.log_channel)
+    await log_channel.send("[BOT ACTIVATED]")
 
 waffle_emoji = '\N{WAFFLE}'
 #define commands
@@ -218,7 +218,6 @@ async def on_message(message):
     #Restart stuff
     if any(message.content.startswith(word) for word in wordlist_system):
         valid_group = 0
-        log_channel = client.get_channel(config.log_channel)
         for role in message.author.roles:
                 if str(role.id) in list_roles_system: #Needed role to restart shit
                     valid_group = 1

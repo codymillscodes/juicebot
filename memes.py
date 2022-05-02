@@ -21,7 +21,10 @@ def random_img(thread):
     #for tag in posts.find_all:
     images = []
     for tag in soup.find_all('img'):
-        images.append(tag['src'])
+        if "somethingawful.com" in tag['src']:
+            continue
+        else:
+            images.append(tag['src'])
     return random.choice(images)
 
 def random_meme():

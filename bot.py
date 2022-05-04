@@ -137,7 +137,8 @@ async def on_message(message):
             prompt = puzzle.get_prompt()
             await message.channel.send(f'```{prompt}```')
         if message.content.startswith('!setprompt'):
-            prompt = puzzle.set_prompt(message.content[9:])
+            puzzle.set_prompt(message.content[9:])
+            prompt = puzzle.get_prompt()
             await message.channel.send(f'Prompt set:\n```{prompt}```')
 #cats
     if any(message.content.startswith(word) for word in wordlist_cats): 

@@ -32,7 +32,7 @@ wordlist_weather = ["!weather"]
 wordlist_help = ['!help']
 wordlist_system = ["!restartbot", "!git-update"]
 wordlist_sa = ['!meme', '!curse', '!funny', '!cute', '!osha', '!badfood', '!schad']
-wordlist_puzzle = ['!prompt', '!getprompt']
+wordlist_puzzle = ['!prompt', '!setprompt']
 not_ready_magnets = []
 
 list_roles_system = ['967697785304526879']

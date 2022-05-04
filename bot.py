@@ -270,9 +270,6 @@ async def on_message(message):
                     x = x + 1
                 em_result.add_field(name="----------------",value="You should pick the one with the most seeders and a reasonable filesize. Pay attention to the quality. You dont want a cam or TS.\n*!pick 1-5*",inline=False,)
                 await message.channel.send(embed=em_result)
-        if message.content.startswith('!unlock'):
-            link = debrid.unlock_link(message.content[8:])
-            await message.channel.send(link)
                 
             def check(m):
                 return m.author == message.author and m.content.startswith("!pick")
@@ -300,6 +297,9 @@ async def on_message(message):
 
             else:
                 await message.channel.send("zero zero zero sesam street sesam street zero zero zero")
+        if message.content.startswith('!unlock'):
+            link = debrid.unlock_link(message.content[8:])
+            await message.channel.send(link)
 
 client.loop.create_task(update_debrid_status())
 

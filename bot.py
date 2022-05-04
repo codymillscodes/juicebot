@@ -137,7 +137,7 @@ async def on_message(message):
             prompt = puzzle.get_prompt()
             await message.channel.send(f'```{prompt}```')
         elif message.content.startswith('!setprompt'):
-            puzzle.set_prompt(message.content[9:])
+            puzzle.set_prompt(message.content[11:])
             prompt = puzzle.get_prompt()
             await message.channel.send(f'Prompt set:\n```{prompt}```')
 #cats

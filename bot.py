@@ -31,7 +31,7 @@ waffle_emoji = '\N{WAFFLE}'
 #define commands
 wordlist_cats = ["!cat", "!catgif", "!neb", 'catfact']
 wordlist_dogs = ['!dog']
-wordlist_debrid = ["!search", "!status", '!lstatus', '!unlock']
+wordlist_debrid = ["!search", "!status", '!lstatus', '!unlock ']
 wordlist_waffle = ["!waffle", f"!{waffle_emoji}", f"!{':w:'}"]
 wordlist_search = ["!wiki", "!movie", "!tv"]
 wordlist_insult = ["!insult"]
@@ -270,36 +270,36 @@ async def on_message(message):
                     x = x + 1
                 em_result.add_field(name="----------------",value="You should pick the one with the most seeders and a reasonable filesize. Pay attention to the quality. You dont want a cam or TS.\n*!pick 1-5*",inline=False,)
                 await message.channel.send(embed=em_result)
-                
-            def check(m):
-                return m.author == message.author and m.content.startswith("!pick")
-            try:
-                msg = await client.wait_for("message", check=check, timeout=60)
-                pick = int(msg.content[6:])-1
-                if int(msg.content[6:]) > 5 or pick < 0:
-                    await message.channel.send("WRONG")
-                else:
-                    magnet_link = debrid.magnet_info(results[pick]["torrentId"])
-                    ready_bool, name, magnet_id = debrid.add_magnet(magnet_link)
-                    if ready_bool:
-                        filez = debrid.build_link_info(magnet_id)
-                        em_links = discord.Embed(description=f"{message.author.mention}")
-                        em_links.set_footer(text=em_footer)
-                        for info in filez:
-                            em_links.add_field(name=info["name"],value=f"{info['link']} | size: {info['size']}",inline=False)
-                        dl_channel = client.get_channel(config.dl_channel)
-                        await dl_channel.send(embed=em_links)
+
+                def check(m):
+                    return m.author == message.author and m.content.startswith("!pick")
+                try:
+                    msg = await client.wait_for("message", check=check, timeout=60)
+                    pick = int(msg.content[6:])-1
+                    if int(msg.content[6:]) > 5 or pick < 0:
+                        await message.channel.send("WRONG")
                     else:
-                        not_ready_magnets.append(magnet_id)
-                        await message.channel.send("It aint ready. Try !status.")
-            except asyncio.TimeoutError:
-                await message.channel.send("TOO SLOW")
+                        magnet_link = debrid.magnet_info(results[pick]["torrentId"])
+                        ready_bool, name, magnet_id = debrid.add_magnet(magnet_link)
+                        if ready_bool:
+                            filez = debrid.build_link_info(magnet_id)
+                            em_links = discord.Embed(description=f"{message.author.mention}")
+                            em_links.set_footer(text=em_footer)
+                            for info in filez:
+                                em_links.add_field(name=info["name"],value=f"{info['link']} | size: {info['size']}",inline=False)
+                            dl_channel = client.get_channel(config.dl_channel)
+                            await dl_channel.send(embed=em_links)
+                        else:
+                            not_ready_magnets.append(magnet_id)
+                            await message.channel.send("It aint ready. Try !status.")
+                except asyncio.TimeoutError:
+                    await message.channel.send("TOO SLOW")
 
             else:
                 await message.channel.send("zero zero zero sesam street sesam street zero zero zero")
         if message.content.startswith('!unlock'):
             link = debrid.unlock_link(message.content[8:])
-            await message.channel.send(link)
+            await message.channel.send
 
 client.loop.create_task(update_debrid_status())
 

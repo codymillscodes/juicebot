@@ -1,18 +1,10 @@
 #!/usr/bin/env python
 #import youtube_dl
-import config
-import debrid
-import datetime
+import config, debrid, memes, puzzle, tv_movies, recipe
+import datetime, random, requests, json
 import discord
-import asyncio
-import requests
-import json
-import random
+import asyncio, subprocess
 import wikipediaapi as wiki
-import subprocess
-import memes
-import tv_movies
-import recipe
 from bs4 import BeautifulSoup
 from hurry.filesize import size
 
@@ -40,6 +32,7 @@ wordlist_weather = ["!weather"]
 wordlist_help = ['!help']
 wordlist_system = ["!restartbot", "!git-update"]
 wordlist_sa = ['!meme', '!curse', '!funny', '!cute', '!osha', '!badfood', '!schad']
+wordlist_puzzle = ['!prompt', '!getprompt']
 not_ready_magnets = []
 
 list_roles_system = ['967697785304526879']
@@ -138,7 +131,14 @@ async def on_message(message):
         em_weather.set_author(name=weather['name'])
         em_weather.description = f"Temp: {weather['main']['temp']}F | {weather['weather'][0]['description']}\nWind: {weather['wind']['speed']} | Humidity: {weather['main']['humidity']}%"
         await message.channel.send(embed=em_weather)
-
+#puzzle
+    if any(message.content.startswith(word) for word in wordlist_puzzle):
+        if message.content.startswith('!prompt'):
+            prompt = puzzle.get_prompt()
+            await message.channel.send(f'```{prompt}```')
+        if message.content.startwith('!setprompt'):
+            prompt = puzzle.set_prompt(message.content[9:])
+            await message.channel.send(f'Prompt set:\n```{prompt}```')
 #cats
     if any(message.content.startswith(word) for word in wordlist_cats): 
         if message.content.startswith('!neb'):

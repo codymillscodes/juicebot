@@ -133,13 +133,14 @@ async def on_message(message):
         await message.channel.send(embed=em_weather)
 #puzzle
     if any(message.content.startswith(word) for word in wordlist_puzzle):
-        if message.content.startswith('!prompt'):
-            prompt = puzzle.get_prompt()
-            await message.channel.send(f'```{prompt}```')
-        elif message.content.startswith('!setprompt'):
+        if message.content.startswith('!setprompt'):
+            print(message.content[11:])
             puzzle.set_prompt(message.content[11:])
             prompt = puzzle.get_prompt()
             await message.channel.send(f'Prompt set:\n```{prompt}```')
+        elif message.content.startswith('!prompt'):
+            prompt = puzzle.get_prompt()
+            await message.channel.send(f'```{prompt}```')
 #cats
     if any(message.content.startswith(word) for word in wordlist_cats): 
         if message.content.startswith('!neb'):

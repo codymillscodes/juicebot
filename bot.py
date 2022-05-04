@@ -299,7 +299,7 @@ async def on_message(message):
                 await message.channel.send("zero zero zero sesam street sesam street zero zero zero")
         if message.content.startswith('!unlock'):
             link = debrid.unlock_link(message.content[8:])
-            await message.channel.send
+            await message.channel.send(link)
 
 client.loop.create_task(update_debrid_status())
 

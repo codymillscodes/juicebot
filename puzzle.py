@@ -1,7 +1,7 @@
 #prompt_file = open('prompt', 'r+')
 
 def set_prompt(prompt):
-    with open('/waffle/prompt', 'r+') as prompt_file:
+    with open('/waffle/prompt', 'w') as prompt_file:
         prompt_file.truncate(0)
         prompt_file.write(prompt)
 def get_prompt():

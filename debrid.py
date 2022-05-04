@@ -116,4 +116,3 @@ def delayed_link_loop(delayed_id):
     url = debrid_url("link", "delayed", f"id={delayed_id}")
     j = json.loads(requests.get(url).text)['data']
     return j
-    ``

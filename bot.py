@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #import youtube_dl
-import config, debrid, memes, puzzle, tv_movies, recipe
+import config, debrid, memes, tv_movies, recipe, sdb, puzzle
 import datetime, random, requests, json
 import discord
 import asyncio, subprocess
@@ -25,7 +25,7 @@ wordlist_cats = ["!cat", "!catgif", "!neb", 'catfact']
 wordlist_dogs = ['!dog']
 wordlist_debrid = ["!search", "!status", '!lstatus', '!unlock ']
 wordlist_waffle = ["!waffle", f"!{waffle_emoji}", f"!{':w:'}"]
-wordlist_search = ["!wiki", "!movie", "!tv"]
+wordlist_search = ["!wiki", "!movie", "!tv", "!regret"]
 wordlist_insult = ["!insult"]
 wordlist_comp = ["!comp"]
 wordlist_weather = ["!weather"]
@@ -224,6 +224,13 @@ async def on_message(message):
                 em_tv.set_author(name=f"{tv.title} ({tv.first_air_date.year})", url="https://www.imdb.com/title/"+tv.imdb_id)
                 em_tv.set_thumbnail(url=tv.poster_url)
                 await message.channel.send(embed=em_tv)
+
+        if message.content.startswith('!regret'):
+            result = sdb.get_word()
+            em_sdb = discord.Embed(description=result[2])
+            em_sdb.set_author(name=result[0], icon_url='https://cdn.discordapp.com/emojis/851882868493254707.webp?size=96&quality=lossless')
+            em_sdb.set_footer(text=(f'{result[1]} | {em_footer}'))
+            await message.channel.send(embed=em_sdb)
 #system commands
     #Restart stuff
     if any(message.content.startswith(word) for word in wordlist_system):

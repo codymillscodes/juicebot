@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #import youtube_dl
-import config, debrid, memes, tv_movies, recipe, sdb, puzzle
+import config, debrid, memes, tv_movies, recipe, sdb #puzzle
 import datetime, random, requests, json
 import discord
 import asyncio, subprocess
@@ -33,6 +33,7 @@ wordlist_help = ['!help']
 wordlist_system = ["!restartbot", "!git-update"]
 wordlist_sa = ['!meme', '!curse', '!funny', '!cute', '!osha', '!badfood', '!schad']
 wordlist_puzzle = ['!prompt', '!setprompt']
+wordlist_recipes = ['!recipe']
 not_ready_magnets = []
 
 list_roles_system = ['967697785304526879']
@@ -103,6 +104,17 @@ async def on_message(message):
         em_help.set_footer(text=em_footer)
         em_help.add_field(name="COMMANDS!", value="!search - Search for a torrent\n!status - which torrents are actively downloading?\n!cat, !catgif, !neb, !catfact - CATS!\n!waffle - roll the dice\n!wiki for wikipedia\n!movie for a movie search\n!tv for tv shows\n!insult, !comp - insult and compliment your subordinates\n!weather cause why not\n!meme, !curse, !funny, !cute - a bit buggy but MEMES!")
         await message.channel.send(embed=em_help)
+#recipe search
+    if any(message.content.startswith(word) for word in wordlist_recipes):
+        em_recipe = discord.Embed()
+        em_recipe.set_footer(text=em_footer)
+        recipes = recipe.recipe_url(message.content[8:])
+        if recipes == 0:
+            await message.channel.send('This is not a food.')
+        else:    
+            for r in recipes:
+                em_recipe.add_field(name=r['recipe']['label'], value=r['recipe']['url'], inline=False)
+            await message.channel.send(embed=em_recipe)
 #sa stuff
     if any(message.content.startswith(word) for word in wordlist_sa):
         if message.content.startswith('!meme'):

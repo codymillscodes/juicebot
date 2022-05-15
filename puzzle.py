@@ -1,6 +1,8 @@
 #prompt_file = open('prompt', 'r+')
 import os
-os.chdir('/waffle')
+import config
+if not config.poop:
+    os.chdir('/waffle')
 
 def set_prompt(prompt):
     with open('prompt', 'w+') as prompt_file:

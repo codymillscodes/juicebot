@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #import youtube_dl
-import config, debrid, memes, tv_movies, recipe, sdb #puzzle
-import datetime, random, requests, json
+import config, debrid, memes, tv_movies, recipe, sdb, puzzle, chatbot
+import datetime, random, requests, json, loki
 import discord
 import asyncio, subprocess
 import wikipediaapi as wiki
@@ -17,6 +17,7 @@ client = discord.Client()
 async def on_ready():
     print(f"Logged in as {client.user.name}")
     log_channel = client.get_channel(config.log_channel)
+    loki.loggi('21', f"Logged in as {client.user.name}", 'on_ready()')
     await log_channel.send("[BOT ACTIVATED]")
 
 waffle_emoji = '\N{WAFFLE}'
@@ -215,7 +216,7 @@ async def on_message(message):
         if message.content.startswith('!movie'):
             results = tv_movies.get_movie_info(message.content[7:])
             if results == 0:
-                print(message.content[8:])
+                print(message.content[7:])
                 await message.channel.send("No results. You must've typed random shit.")
             else:
                 movie = results[0]
@@ -321,7 +322,9 @@ async def on_message(message):
         if message.content.startswith('!unlock'):
             link = debrid.unlock_link(message.content[8:])
             await message.channel.send(link)
-
+    if client.user.mention in message.content:
+        response = chatbot.get_response(message.content[8:])
+        await message.channel.send(response[8:])
 client.loop.create_task(update_debrid_status())
 
 client.run(config.discord_bot_token)

@@ -324,7 +324,13 @@ async def on_message(message):
             await message.channel.send(link)
     if client.user.mention in message.content:
         response = chatbot.get_response(message.content[8:])
-        await message.channel.send(response[8:])
+        if response.startswith("Waffle: "):
+            response = response[8:]
+        if "Human:" in response:
+            index = response.find("Human:")
+            await message.channel.send(response[8:index])
+        else:
+            await message.channel.send(response[8:])
 client.loop.create_task(update_debrid_status())
 
 client.run(config.discord_bot_token)

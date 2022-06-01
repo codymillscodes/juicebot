@@ -8,16 +8,13 @@ import wikipediaapi as wiki
 from bs4 import BeautifulSoup
 from hurry.filesize import size
 
-print(config.discord_application_id)
-
 #define discord client
 client = discord.Client()
 
 @client.event
 async def on_ready():
-    print(f"Logged in as {client.user.name}")
     log_channel = client.get_channel(config.log_channel)
-    loki.loggi('21', f"Logged in as {client.user.name}", 'on_ready()')
+    loki.log('info', 'on_ready()', f"Logged in as {client.user.name}")
     await log_channel.send("[BOT ACTIVATED]")
 
 waffle_emoji = '\N{WAFFLE}'
@@ -25,7 +22,7 @@ waffle_emoji = '\N{WAFFLE}'
 wordlist_cats = ["!cat", "!catgif", "!neb", 'catfact']
 wordlist_dogs = ['!dog']
 wordlist_debrid = ["!search", "!status", '!lstatus', '!unlock ']
-wordlist_waffle = ["!waffle", f"!{waffle_emoji}", f"!{':w:'}"]
+wordlist_waffle = ["!waffle", f"!{waffle_emoji}", f"!{':w:'}", "!chat", "!gptprompt"]
 wordlist_search = ["!wiki", "!movie", "!tv", "!regret"]
 wordlist_insult = ["!insult"]
 wordlist_comp = ["!comp"]
@@ -62,13 +59,16 @@ praise = {
  #'\N{U+1F9C7}'
 #check if string can be converted to int
 def check_int(potential_int):
+    loki.log('info', 'bot.check_int', f"Checking int for {potential_int}")
     try:
         int(potential_int)
+        loki.log('info', 'bot.check_int', f"Congrats! It's an integer!")
         return True
     except ValueError:
+        loki.log('info', 'bot.check_int', f"That's no int!")
         return False
 
-async def update_debrid_status():
+async def update_debrid_status(): # log this stuff
     await client.wait_until_ready()
     while not client.is_closed():
         if len(not_ready_magnets) > 0:
@@ -100,52 +100,73 @@ async def on_message(message):
     #if str(message.channel.id) in config.discord_ignored_channel_ids: #Don't respond to these channel ids
         #return
     if any(message.content.startswith(word) for word in wordlist_help):
+        loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
         em_help = discord.Embed()
         em_help.set_author(name="Help!")
         em_help.set_footer(text=em_footer)
         em_help.add_field(name="COMMANDS!", value="!search - Search for a torrent\n!status - which torrents are actively downloading?\n!cat, !catgif, !neb, !catfact - CATS!\n!waffle - roll the dice\n!wiki for wikipedia\n!movie for a movie search\n!tv for tv shows\n!insult, !comp - insult and compliment your subordinates\n!weather cause why not\n!meme, !curse, !funny, !cute - a bit buggy but MEMES!")
+        loki.log('info', 'bot.help', f"Sending help embed to {message.author}")
         await message.channel.send(embed=em_help)
 #recipe search
     if any(message.content.startswith(word) for word in wordlist_recipes):
+        loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
         em_recipe = discord.Embed()
         em_recipe.set_footer(text=em_footer)
         recipes = recipe.recipe_url(message.content[8:])
+        loki.log('info', 'bot.recipes', f"Searching recipes for: {message.author}")
         if recipes == 0:
+            loki.log('info', 'bot.recipes', f"Got no results for {message.content[8:]}.")
             await message.channel.send('This is not a food.')
-        else:    
+        else:
+            loki.log('info', 'bot.recipes', f"Got {len(recipes)} results for {message.content[8:]}.")    
             for r in recipes:
                 em_recipe.add_field(name=r['recipe']['label'], value=r['recipe']['url'], inline=False)
+            loki.log('info', 'bot.recipes', f"Sending recipe embed.") 
             await message.channel.send(embed=em_recipe)
 #sa stuff
     if any(message.content.startswith(word) for word in wordlist_sa):
+        loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
+        loki.log('info', 'bot.sa', f"Grabbing a meme for {message.author}")
         if message.content.startswith('!meme'):
+            loki.log('info', 'bot.sa', f"Sending !meme to {message.author}")
             await message.channel.send(memes.random_meme(3813092))
         if message.content.startswith('!funny'):
+            loki.log('info', 'bot.sa', f"Sending !funny to {message.author}")
             await message.channel.send(memes.random_meme(3811995))
         if message.content.startswith('!curse'):
+            loki.log('info', 'bot.sa', f"Sending !curse to {message.author}")
             await message.channel.send(memes.random_meme(3833370))
         if message.content.startswith('!cute'):
+            loki.log('info', 'bot.sa', f"Sending !cute to {message.author}")
             await message.channel.send(memes.random_meme(3769444))
         if message.content.startswith('!osha'):
+            loki.log('info', 'bot.sa', f"Sending !osha to {message.author}")
             await message.channel.send(memes.random_meme(3904642))
         if message.content.startswith('!badfood'):
+            loki.log('info', 'bot.sa', f"Sending !badfood to {message.author}")
             await message.channel.send(memes.random_meme(3959162))
         if message.content.startswith('!schad'):
+            loki.log('info', 'bot.sa', f"Sending !schad to {message.author}")
             await message.channel.send(memes.random_meme(3897718))
 #weather
     if any(message.content.startswith(word) for word in wordlist_weather):
+        loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
+        loki.log('info', 'bot.weather', f"Getting weather for {message.author}")
         if(check_int(message.content[9:])):
             arg = f'zip={message.content[9:]}'
         else:
             arg = f'q={message.content[9:]}'
+        loki.log('info', 'bot.weather', f"Query: {arg}")
         weather = json.loads(requests.get(f"https://api.openweathermap.org/data/2.5/weather?{arg}&appid={config.owm_auth}&units=imperial").text)
         em_weather = discord.Embed()
         em_weather.set_footer(text=em_footer)
         em_weather.set_author(name=weather['name'])
         em_weather.description = f"Temp: {weather['main']['temp']}F | {weather['weather'][0]['description']}\nWind: {weather['wind']['speed']} | Humidity: {weather['main']['humidity']}%"
+        loki.log('info', 'bot.weather', f"Sending weather embed.")
         await message.channel.send(embed=em_weather)
 #puzzle
     if any(message.content.startswith(word) for word in wordlist_puzzle):
+        loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
         if message.content.startswith('!setprompt'):
             print(message.content[11:])
             puzzle.set_prompt(message.content[11:])
@@ -156,53 +177,71 @@ async def on_message(message):
             await message.channel.send(f'```{prompt}```')
 #cats
     if any(message.content.startswith(word) for word in wordlist_cats): 
+        loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
         if message.content.startswith('!neb'):
+            loki.log('info', 'bot.cats', f"Getting !neb for {message.author}")
             cat_search = f"https://api.thecatapi.com/v1/images/search?breed_ids=nebe&api_key={config.cat_auth}"
             cat_pic = json.loads(requests.get(cat_search).text)[0]["url"]
+            loki.log('info', 'bot.cats', f"Sending cat_pic: {cat_pic}")
             await message.channel.send(cat_pic)
         elif message.content.startswith('!catgif'):
+            loki.log('info', 'bot.cats', f"Getting !catgif for {message.author}")
             cat_search = f"https://api.thecatapi.com/v1/images/search?mime_types=gif&api_key={config.cat_auth}"
             cat_pic = json.loads(requests.get(cat_search).text)[0]["url"]
+            loki.log('info', 'bot.cats', f"Sending cat_pic: {cat_pic}")
             await message.channel.send(cat_pic)
         elif message.content.startswith('!catfact'):
+            loki.log('info', 'bot.cats', f"Getting !catfact for {message.author}")
             cat_fact = json.loads(requests.get('https://meowfacts.herokuapp.com').text)["data"]
             fact = ((str(cat_fact)).strip("'[]'"))
+            loki.log('info', 'bot.cats', f"Sending cat_fact: {fact}")
             await message.channel.send(fact)
         elif message.content.startswith('!cat'):
+            loki.log('info', 'bot.cats', f"Getting !cat for {message.author}")
             cat_search = f"https://api.thecatapi.com/v1/images/search?api_key={config.cat_auth}"
             cat_pic = json.loads(requests.get(cat_search).text)[0]["url"]
+            loki.log('info', 'bot.cats', f"Sending cat_pic: {cat_pic}")
             await message.channel.send(cat_pic)
 #dog
     if any(message.content.startswith(word) for word in wordlist_dogs):
+        loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
+        loki.log('info', 'bot.dogs', f"Getting !dog for {message.author}")
         dog_search = f"https://api.thedogapi.com/v1/images/search?api_key={config.dog_auth}"
         dog_pic = json.loads(requests.get(dog_search).text)[0]["url"]
+        loki.log('info', 'bot.dogs', f"Sending dog_pic: {dog_pic}")
         await message.channel.send(dog_pic)
 #random waffle command
     if any(message.content.startswith(word) for word in wordlist_waffle):
+        loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
         waffles = 'https://randomwaffle.gbs.fm/'
         image = BeautifulSoup(requests.get(waffles).content, 'html.parser').find('img').attrs['src']
+        loki.log('info', 'bot.waffle', f"Sending waffle! to {message.author}: {waffles+image}")
         await message.channel.send(waffles+image)
 #insults
     if any(message.content.startswith(word) for word in wordlist_insult):
+        loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
         a = random.choice(insult_words['A'])
         b = random.choice(insult_words['B'])
         c = random.choice(insult_words['C'])
         d = random.choice(insult_words['D'])
         e = random.choice(insult_words['E'])
         f = random.choice(insult_words['F'])
-        
+        loki.log('info', 'bot.insult', f"{message.author} is insulting {message.content[8:]}.")
         await message.channel.send(f"{message.content[8:]} is {a} {b} {c} and a {d} {e} {f}.")
 #compliments
     if any(message.content.startswith(word) for word in wordlist_comp):
+        loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
         a = random.choice(praise['A'])
         b = random.choice(praise['B'])
         c = random.choice(praise['B'])
         d = random.choice(praise['C'])
-        
+        loki.log('info', 'bot.comp', f"{message.author} is complimenting {message.content[8:]}.")
         await message.channel.send(f"{message.content[6:]}, you {b.lower()}, {d.lower()} and {c.lower()} {a.lower()}.")
 #searchin stuff
     if any(message.content.startswith(word) for word in wordlist_search):
+        loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
         if message.content.startswith('!wiki'):
+            loki.log('info', 'bot.search', f"{message.author} is searching wiki for {message.content[6:]}")
             wiki_search = wiki.Wikipedia('en')
             page = wiki_search.page(f'{message.content[6:]}')
 
@@ -210,35 +249,45 @@ async def on_message(message):
                 wiki_embed = discord.Embed()
                 wiki_embed.set_footer(text=em_footer)
                 wiki_embed.description = f"[**{page.title}**]({page.fullurl})\n{page.summary[0:500]}..."
+                loki.log('info', 'bot.search', f"Found wiki page and built embed.")
                 await message.channel.send(embed=wiki_embed)
             else:
+                loki.log('info', 'bot.search', f"No wiki results.")
                 await message.channel.send("Pretty sure you made that up.")
         if message.content.startswith('!movie'):
+            loki.log('info', 'bot.search', f"{message.author} is searching for !movie {message.content[7:]}")
             results = tv_movies.get_movie_info(message.content[7:])
             if results == 0:
-                print(message.content[7:])
+                loki.log('info', 'bot.search', f"Got no results for the movie.")
                 await message.channel.send("No results. You must've typed random shit.")
             else:
                 movie = results[0]
+                loki.log('info', 'bot.search', f"Found {movie}. Building embed.")
                 em_movie = discord.Embed(description=movie.overview)
                 em_movie.set_footer(text=f"{movie.genres[0].name}, {movie.genres[1].name} | {movie.original_language} | {movie.vote_average}% ({movie.vote_count})")
                 em_movie.set_author(name=f"{movie.title} ({movie.release_date.year})", url="https://www.imdb.com/title/"+movie.imdb_id)
                 em_movie.set_thumbnail(url=movie.poster_url)
+                loki.log('info', 'bot.search', f"Sending movie embed.")
                 await message.channel.send(embed=em_movie)
 
         if message.content.startswith('!tv'):
+            loki.log('info', 'bot.search', f"{message.author} is searching for !tv {message.content[4:]}")
             results = tv_movies.get_tv_info(message.content[4:])
             if results == 0:
+                loki.log('info', 'bot.search', f"Got no results for the show.")
                 await message.channel.send("No results. You must've typed random shit.")
             else:
                 tv = results[0]
+                loki.log('info', 'bot.search', f"Found {tv}. Building embed.")
                 em_tv = discord.Embed(description=tv.overview)
                 em_tv.set_footer(text=f"{tv.genres[0].name}, {tv.genres[1].name} | {tv.vote_average}% ({tv.vote_count})")
                 em_tv.set_author(name=f"{tv.title} ({tv.first_air_date.year})", url="https://www.imdb.com/title/"+tv.imdb_id)
                 em_tv.set_thumbnail(url=tv.poster_url)
+                loki.log('info', 'bot.search', f"Sending tv embed.")
                 await message.channel.send(embed=em_tv)
 
         if message.content.startswith('!regret'):
+            loki.log('info', 'bot.regret', f"{message.author} wants to be offended.")
             result = sdb.get_word()
             em_sdb = discord.Embed(description=result[2])
             em_sdb.set_author(name=result[0], icon_url='https://cdn.discordapp.com/emojis/851882868493254707.webp?size=96&quality=lossless')
@@ -247,22 +296,28 @@ async def on_message(message):
 #system commands
     #Restart stuff
     if any(message.content.startswith(word) for word in wordlist_system):
+        loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
         #log_channel = client.get_channel(config.log_channel)
         valid_group = 0
+        loki.log('info', 'bot.system', f"{message.author} has invoked a system command.")
         for role in message.author.roles:
                 if str(role.id) in list_roles_system: #Needed role to restart shit
                     valid_group = 1
         if valid_group == 1:
             if message.content.startswith('!restartbot'):
+                loki.log('info', 'bot.system', f"Restarting bot.")
                 await log_channel.send(string_restartdiscord)
                 subprocess.run('/waffle/scripts/restart.sh', shell=True)
             elif message.content.startswith('!git-update'):
+                loki.log('info', 'bot.system', f"Pulling from git and then restarting.")
                 await log_channel.send(string_updatebot)
                 subprocess.run('/waffle/scripts/update.sh', shell=True)
         else:
+            loki.log('warning', 'bot.system', f"{message.author} isn't auth'd for system commands.")
             await message.channel.send(string_no_restart)
 #debrid
     if any(message.content.startswith(word) for word in wordlist_debrid):
+        loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
         if message.content.startswith('!status'):
             magnet_status = debrid.get_status(all = True)
             if len(magnet_status['magnets']) > 0:
@@ -322,15 +377,27 @@ async def on_message(message):
         if message.content.startswith('!unlock'):
             link = debrid.unlock_link(message.content[8:])
             await message.channel.send(link)
-    if client.user.mention in message.content:
-        response = chatbot.get_response(message.content[8:])
+    if message.content.startswith('@waffle') or client.user.mention in message.content:
+        loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
+        input = message.content.split(maxsplit=1)[1]
+        #print(input)
+        #input = input[1]
+        print("Message content: " + input)
+        response = chatbot.get_response(input).strip()
         if response.startswith("Waffle: "):
-            response = response[8:]
+            response = response.split(maxsplit=1)[1]
         if "Human:" in response:
             index = response.find("Human:")
-            await message.channel.send(response[8:index])
+            await message.channel.send(response[:index])
         else:
-            await message.channel.send(response[8:])
+            await message.channel.send(response)
+    if message.content.startswith("!gpt"):
+        input = message.content.split(maxsplit=1)[1]
+        response = chatbot.chat_response(input).strip()
+        await message.channel.send(response)
+    if message.content.startswith('!chatprompt'):
+        chatbot.set_prompt(message.content.split(maxsplit=1)[1])
+        print(message.content.split(maxsplit=1)[1])
 client.loop.create_task(update_debrid_status())
 
 client.run(config.discord_bot_token)

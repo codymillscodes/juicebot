@@ -30,7 +30,7 @@ wordlist_comp = ["!comp"]
 wordlist_weather = ["!weather"]
 wordlist_help = ['!help']
 wordlist_system = ["!restartbot", "!git-update", "!media", "!users"]
-wordlist_sa = ['!meme', '!curse', '!funny', '!cute', '!osha', '!badfood', '!schad']
+wordlist_sa = ['!meme', '!curse', '!funny', '!cute', '!osha', '!badfood', '!schad', '!gif']
 wordlist_puzzle = ['!prompt', '!setprompt']
 wordlist_recipes = ['!recipe']
 not_ready_magnets = []
@@ -159,27 +159,29 @@ async def on_message(message):
     if any(message.content.startswith(word) for word in wordlist_sa):
         loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
         loki.log('info', 'bot.sa', f"Grabbing a meme for {message.author}")
-        if message.content.startswith('!meme'):
-            loki.log('info', 'bot.sa', f"Sending !meme to {message.author}")
-            await message.channel.send(memes.random_meme(3813092))
-        if message.content.startswith('!funny'):
-            loki.log('info', 'bot.sa', f"Sending !funny to {message.author}")
-            await message.channel.send(memes.random_meme(3811995))
-        if message.content.startswith('!curse'):
-            loki.log('info', 'bot.sa', f"Sending !curse to {message.author}")
-            await message.channel.send(memes.random_meme(3833370))
-        if message.content.startswith('!cute'):
-            loki.log('info', 'bot.sa', f"Sending !cute to {message.author}")
-            await message.channel.send(memes.random_meme(3769444))
-        if message.content.startswith('!osha'):
-            loki.log('info', 'bot.sa', f"Sending !osha to {message.author}")
-            await message.channel.send(memes.random_meme(3904642))
-        if message.content.startswith('!badfood'):
-            loki.log('info', 'bot.sa', f"Sending !badfood to {message.author}")
-            await message.channel.send(memes.random_meme(3959162))
-        if message.content.startswith('!schad'):
-            loki.log('info', 'bot.sa', f"Sending !schad to {message.author}")
-            await message.channel.send(memes.random_meme(3897718))
+        request = message.content.split()[0]
+        await message.channel.send(db.get_img(str(request[1:])))
+        # if message.content.startswith('!meme'):
+        #     loki.log('info', 'bot.sa', f"Sending !meme to {message.author}")
+        #     await message.channel.send(db.get_img(meme))
+        # if message.content.startswith('!funny'):
+        #     loki.log('info', 'bot.sa', f"Sending !funny to {message.author}")
+        #     await message.channel.send(db.get_img(meme))
+        # if message.content.startswith('!curse'):
+        #     loki.log('info', 'bot.sa', f"Sending !curse to {message.author}")
+        #     await message.channel.send(db.get_img(meme))
+        # if message.content.startswith('!cute'):
+        #     loki.log('info', 'bot.sa', f"Sending !cute to {message.author}")
+        #     await message.channel.send(db.get_img(meme))
+        # if message.content.startswith('!osha'):
+        #     loki.log('info', 'bot.sa', f"Sending !osha to {message.author}")
+        #     await message.channel.send()
+        # if message.content.startswith('!badfood'):
+        #     loki.log('info', 'bot.sa', f"Sending !badfood to {message.author}")
+        #     await message.channel.send()
+        # if message.content.startswith('!schad'):
+        #     loki.log('info', 'bot.sa', f"Sending !schad to {message.author}")
+        #     await message.channel.send()
 #weather
     if any(message.content.startswith(word) for word in wordlist_weather):
         loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")

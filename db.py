@@ -2,10 +2,16 @@ import psycopg2 as cop
 import datetime
 
 con = cop.connect(host="localhost", database="backlog", user="postgres", password="postgres")
+con_sa = cop.connect(host="localhost", database="sa_images", user="postgres", password="postgres")
 
 print("DB connected!")
-
 cur = con.cursor()
+cur_sa = con_sa.cursor()
+
+def get_img(thread):
+    cur_sa.execute("SELECT url FROM {0} ORDER BY RANDOM() LIMIT 1".format(thread))
+    img = cur_sa.fetchone()
+    return img[0]
 
 def get_users():
     cur.execute("select * from users")

@@ -125,14 +125,12 @@ async def on_message(message):
             await message.channel.send('Added.')
         if message.content.startswith("!getrec"):
             q = message.content[8:].split()
-            print(len(q))
             if len(q) == 0:
                 recs = db.get_recs(message.author.name)
             elif len(q) == 1:
                 recs = db.get_recs(message.author.name, q[0])
             elif q[0] == 'for':
                 recs = db.get_recs(' '.join(q[1:]))
-            print(' '.join(q[1:]))
             em_recs = discord.Embed()
             em_recs.set_author(name='Recommendations')
             #em_recs.set_footer(text=em_footer)
@@ -200,7 +198,6 @@ async def on_message(message):
     if any(message.content.startswith(word) for word in wordlist_puzzle):
         loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
         if message.content.startswith('!setprompt'):
-            print(message.content[11:])
             puzzle.set_prompt(message.content[11:])
             prompt = puzzle.get_prompt()
             await message.channel.send(f'Prompt set:\n```{prompt}```')
@@ -414,7 +411,6 @@ async def on_message(message):
         input = message.content.split(maxsplit=1)[1]
         #print(input)
         #input = input[1]
-        print("Message content: " + input)
         response = chatbot.get_response(input).strip()
         if response.startswith("Waffle: "):
             response = response.split(maxsplit=1)[1]
@@ -429,7 +425,6 @@ async def on_message(message):
         await message.channel.send(response)
     if message.content.startswith('!chatprompt'):
         chatbot.set_prompt(message.content.split(maxsplit=1)[1])
-        print(message.content.split(maxsplit=1)[1])
 client.loop.create_task(update_debrid_status())
 
 client.run(config.discord_bot_token)

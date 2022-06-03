@@ -7,6 +7,16 @@ print("DB connected!")
 
 cur = con.cursor()
 
+def get_users():
+    cur.execute("select * from users")
+    users = cur.fetchall()
+    return users
+
+def get_media():
+    cur.execute("select * from media")
+    media = cur.fetchall()
+    return media
+
 def escape_quote(x):
     if "'" in x:
         return x.replace("'", "''")

@@ -29,7 +29,7 @@ wordlist_insult = ["!insult"]
 wordlist_comp = ["!comp"]
 wordlist_weather = ["!weather"]
 wordlist_help = ['!help']
-wordlist_system = ["!restartbot", "!git-update"]
+wordlist_system = ["!restartbot", "!git-update", "!media", "!users"]
 wordlist_sa = ['!meme', '!curse', '!funny', '!cute', '!osha', '!badfood', '!schad']
 wordlist_puzzle = ['!prompt', '!setprompt']
 wordlist_recipes = ['!recipe']
@@ -339,6 +339,12 @@ async def on_message(message):
                 loki.log('info', 'bot.system', f"Restarting bot.")
                 await log_channel.send(string_restartdiscord)
                 subprocess.run('/waffle/scripts/restart.sh', shell=True)
+            elif message.content.startswith('!users'):
+                users = db.get_users()
+                await message.channel.send(f"```{users}```")
+            elif message.content.startswith('!media'):
+                media = db.get_media()
+                await message.channel.send(f"```{media}```")
             elif message.content.startswith('!git-update'):
                 loki.log('info', 'bot.system', f"Pulling from git and then restarting.")
                 await log_channel.send(string_updatebot)

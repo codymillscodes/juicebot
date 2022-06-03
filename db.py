@@ -15,9 +15,8 @@ def escape_quote(x):
 def add_rec(title, by, to, platform, year = 0, genre = '', length = '', author = ''):
     dt = datetime.datetime.now()
     cur.execute("INSERT INTO media (title, author, platform, year, genre, length, rec_by, rec_to, created_on, consumed) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-        (title.Title(), author, platform, year, genre, length, by, to, f"{dt.date()} {dt.time()}", False))
+        (title.title(), author, platform, year, genre, length, by, to, f"{dt.date()} {dt.time()}", False))
     con.commit()
-
     return 0
 
 def get_recs(name, platform = ''):

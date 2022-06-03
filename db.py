@@ -9,13 +9,33 @@ cur = con.cursor()
 
 def get_users():
     cur.execute("select * from users")
+    column_names = [desc[0] for desc in cur.description]
     users = cur.fetchall()
-    return users
+    table = "8=D"
+    for name in column_names:
+        table = table + f" {name} 8=D"
+    for x in users:
+        table = table + "\n"
+        for y in x:
+            table = table + '!'
+            table = table + f" {y} !"
+    print(table)
+    return table[:1990]
 
 def get_media():
     cur.execute("select * from media")
+    column_names = [desc[0] for desc in cur.description]
     media = cur.fetchall()
-    return media
+    table = "8=D"
+    for name in column_names:
+        table = table + f" {name} 8=D"
+    for x in media:
+        table = table + "\n"
+        for y in x:
+            table = table + '!'
+            table = table + f" {y} !"
+    print(table)
+    return table[:1990]
 
 def escape_quote(x):
     if "'" in x:

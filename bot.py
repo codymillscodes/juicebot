@@ -116,6 +116,7 @@ async def on_message(message):
                 db.add_alias(name, name)
                 db.add_alias(name, message.author)
                 db.add_alias(name, f"<@{message.author.id}>")
+                db.add_alias(name, 'everyone')
             elif len(message.content[10:]) > 0:
                 db.add_alias(name, message.content[10:])
             else:

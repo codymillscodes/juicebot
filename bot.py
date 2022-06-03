@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #import youtube_dl
 import config, debrid, memes, tv_movies, recipe, sdb, puzzle, chatbot
-import datetime, random, requests, json, loki
+import datetime, random, requests, json, loki, db
 import discord
 import asyncio, subprocess
 import wikipediaapi as wiki
@@ -19,6 +19,7 @@ async def on_ready():
 
 waffle_emoji = '\N{WAFFLE}'
 #define commands
+wordlist_recs = ["!addrec", "!getrec", "!addalias"]
 wordlist_cats = ["!cat", "!catgif", "!neb", 'catfact']
 wordlist_dogs = ['!dog']
 wordlist_debrid = ["!search", "!status", '!lstatus', '!unlock ']
@@ -107,6 +108,36 @@ async def on_message(message):
         em_help.add_field(name="COMMANDS!", value="!search - Search for a torrent\n!status - which torrents are actively downloading?\n!cat, !catgif, !neb, !catfact - CATS!\n!waffle - roll the dice\n!wiki for wikipedia\n!movie for a movie search\n!tv for tv shows\n!insult, !comp - insult and compliment your subordinates\n!weather cause why not\n!meme, !curse, !funny, !cute - a bit buggy but MEMES!")
         loki.log('info', 'bot.help', f"Sending help embed to {message.author}")
         await message.channel.send(embed=em_help)
+    if(any(message.content.startswith(word) for word in wordlist_recs)):
+        if message.content.startswith("!addalias"):
+            name = message.author.name
+            if message.content[10:] == 'all':
+                db.add_alias(name, name)
+                db.add_alias(name, message.author)
+                db.add_alias(name, f"<@{message.author.id}")
+            elif len(message.content[10:]) > 0:
+                db.add_alias(name, message.content[10:])
+            else:
+                await message.channel.send('Alias cannot be blank.') 
+        if message.content.startswith("!addrec"):
+            rec = message.content[8:].split(", ")
+            db.add_rec(rec[0], message.author.name, rec[1], rec[2])
+            await message.channel.send('Added.')
+        if message.content.startswith("!getrec"):
+            q = message.content[8:].split()
+            if message.content[8:] == '':
+                recs = db.get_recs(message.author.name)
+            if len(q) == 1:
+                recs = db.get_recs(message.author.name, q[0])
+            elif q[0] == 'for':
+                recs = db.get_recs(' '.join(q[1:]))
+            print(' '.join(q[1:]))
+            em_recs = discord.Embed()
+            em_recs.set_author(name='Recommendations')
+            #em_recs.set_footer(text=em_footer)
+            for rec in recs:
+                em_recs.add_field(name=f"{rec[0]}", value= f"{rec[1]} | {rec[2]}", inline = False)
+            await message.channel.send(embed=em_recs)
 #recipe search
     if any(message.content.startswith(word) for word in wordlist_recipes):
         loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")

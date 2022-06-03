@@ -1,7 +1,7 @@
 import psycopg2 as cop
 import datetime
 
-con = cop.connect(database="backlog", user="postgres")
+con = cop.connect(host="localhost", database="backlog", user="postgres", password="postgres")
 
 print("DB connected!")
 

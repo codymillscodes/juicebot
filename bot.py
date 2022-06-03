@@ -114,7 +114,7 @@ async def on_message(message):
             if message.content[10:] == 'all':
                 db.add_alias(name, name)
                 db.add_alias(name, message.author)
-                db.add_alias(name, f"<@{message.author.id}")
+                db.add_alias(name, f"<@{message.author.id}>")
             elif len(message.content[10:]) > 0:
                 db.add_alias(name, message.content[10:])
             else:
@@ -125,7 +125,7 @@ async def on_message(message):
             await message.channel.send('Added.')
         if message.content.startswith("!getrec"):
             q = message.content[8:].split()
-            if message.content[8:] == '':
+            if len(q) == 0:
                 recs = db.get_recs(message.author.name)
             if len(q) == 1:
                 recs = db.get_recs(message.author.name, q[0])

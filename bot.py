@@ -108,6 +108,7 @@ async def on_message(message):
         em_help.add_field(name="COMMANDS!", value="!search - Search for a torrent\n!status - which torrents are actively downloading?\n!cat, !catgif, !neb, !catfact - CATS!\n!waffle - roll the dice\n!wiki for wikipedia\n!movie for a movie search\n!tv for tv shows\n!insult, !comp - insult and compliment your subordinates\n!weather cause why not\n!meme, !curse, !funny, !cute - a bit buggy but MEMES!")
         loki.log('info', 'bot.help', f"Sending help embed to {message.author}")
         await message.channel.send(embed=em_help)
+#recommendations!
     if(any(message.content.startswith(word) for word in wordlist_recs)):
         if message.content.startswith("!addalias"):
             name = message.author.name

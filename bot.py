@@ -125,9 +125,10 @@ async def on_message(message):
             await message.channel.send('Added.')
         if message.content.startswith("!getrec"):
             q = message.content[8:].split()
+            print(len(q))
             if len(q) == 0:
                 recs = db.get_recs(message.author.name)
-            if len(q) == 1:
+            elif len(q) == 1:
                 recs = db.get_recs(message.author.name, q[0])
             elif q[0] == 'for':
                 recs = db.get_recs(' '.join(q[1:]))

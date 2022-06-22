@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #import youtube_dl
-import config, debrid, memes, tv_movies, recipe, sdb, puzzle, chatbot
+import config, debrid, memes, tv_movies, recipe, puzzle, chatbot
 import datetime, random, requests, json, loki, db
 import discord
 import asyncio, subprocess

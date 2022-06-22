@@ -30,3 +30,15 @@ openai_key = os.environ["openai_key"]
 host = 'waffle'
 loki_ip = os.environ["loki_ip"]
 poop = True
+#dbs
+recommend_host = os.environ["recommend_host"]
+recommend_dbname = os.environ["recommend_dbname"]
+recommend_port = 5432
+recommend_pass = os.environ["recommend_pass"]
+recommend_user = os.environ["recommend_user"]
+
+images_host = os.environ["images_host"]
+images_dbname = os.environ["images_dbname"]
+images_port = os.environ["images_port"]
+images_pass = os.environ["images_pass"]
+images_user = os.environ["images_user"]

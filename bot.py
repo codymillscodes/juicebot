@@ -319,13 +319,6 @@ async def on_message(message):
                 loki.log('info', 'bot.search', f"Sending tv embed.")
                 await message.channel.send(embed=em_tv)
 
-        if message.content.startswith('!regret'):
-            loki.log('info', 'bot.regret', f"{message.author} wants to be offended.")
-            result = sdb.get_word()
-            em_sdb = discord.Embed(description=result[2])
-            em_sdb.set_author(name=result[0], icon_url='https://cdn.discordapp.com/emojis/851882868493254707.webp?size=96&quality=lossless')
-            em_sdb.set_footer(text=(f'{result[1]} | {em_footer}'))
-            await message.channel.send(embed=em_sdb)
 #system commands
     #Restart stuff
     if any(message.content.startswith(word) for word in wordlist_system):

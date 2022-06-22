@@ -1,8 +1,5 @@
 __pycache__/
-.venv/
 scripts/
 cache.sqlite
 access_token.txt
-sdb.py
-rsdb
 push_loki.py

@@ -14,7 +14,7 @@ client = discord.Client(intents=intents)
 
 @client.event
 async def on_ready():
-    log_channel = client.get_channel(str(config.log_channel))
+    log_channel = client.get_channel(config.log_channel)
     loki.log('info', 'on_ready()', f"Logged in as {client.user.name} log_channel: {config.log_channel}")
     await log_channel.send("[BOT ACTIVATED]")
 

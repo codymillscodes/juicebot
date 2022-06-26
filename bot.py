@@ -14,8 +14,7 @@ client = discord.Client()
 @client.event
 async def on_ready():
     log_channel = client.get_channel(str(config.log_channel))
-    print(log_channel)
-    loki.log('info', 'on_ready()', f"Logged in as {client.user.name} log_channel: {log_channel}")
+    loki.log('info', 'on_ready()', f"Logged in as {client.user.name} log_channel: {config.log_channel}")
     await log_channel.send("[BOT ACTIVATED]")
 
 waffle_emoji = '\N{WAFFLE}'

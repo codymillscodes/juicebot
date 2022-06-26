@@ -9,7 +9,8 @@ from bs4 import BeautifulSoup
 from hurry.filesize import size
 
 #define discord client
-client = discord.Client()
+intents = discord.Intents().all()
+client = discord.Client(intents=intents)
 
 @client.event
 async def on_ready():

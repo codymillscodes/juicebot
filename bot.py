@@ -165,13 +165,13 @@ async def on_message(message):
         loki.log('info', 'bot.sa', f"Grabbing a meme for {message.author}")
         request = message.content.split()[0]
         meme = db.get_img(str(request[1:]))
-        async with aiohttp.ClientSession() as session:
-          async with session.get(meme) as resp:
-              if resp.status != 200:
-                 return await message.channel.send('404')
-              data = io.BytesIO(await resp.read())
+        #async with aiohttp.ClientSession() as session:
+         # async with session.get(meme) as resp:
+          #    if resp.status != 200:
+            #     return await message.channel.send('404')
+          #    data = io.BytesIO(await resp.read())
            
-              await message.channel.send(file=discord.File(data, f'{os.path.basename(meme)}'))
+        await message.channel.send(meme)
         
         # if message.content.startswith('!meme'):
         #     loki.log('info', 'bot.sa', f"Sending !meme to {message.author}")

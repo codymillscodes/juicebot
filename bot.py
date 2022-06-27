@@ -161,7 +161,7 @@ async def on_message(message):
         loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
         loki.log('info', 'bot.sa', f"Grabbing a meme for {message.author}")
         request = message.content.split()[0]
-        await message.channel.send(db.get_img(str(request[1:])))
+        await message.channel.send(file=discord.File(db.get_img(str(request[1:]))))
         # if message.content.startswith('!meme'):
         #     loki.log('info', 'bot.sa', f"Sending !meme to {message.author}")
         #     await message.channel.send(db.get_img(meme))
@@ -190,7 +190,7 @@ async def on_message(message):
         city = message.content[9:]
         if ' ' in city:
             city = city.replace(' ', '+')
-        await message.channel.send(f"https://wttr.in/{city}_pnQ1_background=36393f.png") 
+        await message.channel.send(file=discord.File(f"https://wttr.in/{city}_pnQ1_background=36393f.png"))
 #puzzle
     if any(message.content.startswith(word) for word in wordlist_puzzle):
         loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")

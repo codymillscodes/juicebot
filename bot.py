@@ -190,7 +190,7 @@ async def on_message(message):
         city = message.content[9:]
         if ' ' in city:
             city = city.replace(' ', '+')
-        await message.channel.send(f"https://wttr.in/{city}_pnQ0_background=36393f.png") 
+        await message.channel.send(f"https://wttr.in/{city}_pnQ1_background=36393f.png") 
 #puzzle
     if any(message.content.startswith(word) for word in wordlist_puzzle):
         loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")

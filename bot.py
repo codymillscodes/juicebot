@@ -201,7 +201,7 @@ async def on_message(message):
         city = message.content[9:]
         if ' ' in city:
             city = city.replace(' ', '+')
-        weather = f"https://wttr.in/{city}_nQ1_background=36393f.png"
+        weather = f"https://wttr.in/{city}_n1_background=36393f.png"
         try:
           async with aiohttp.ClientSession() as session:
             async with session.get(weather) as resp:

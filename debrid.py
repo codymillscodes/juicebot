@@ -6,7 +6,7 @@ import loki
 from hurry.filesize import size
 from py1337x import py1337x
 
-torrents = py1337x(proxy="1337x.to", backend='memory')
+torrents = py1337x(proxy="1337x.to", cookie=config.cookie, backend='memory')
 
 plus = "%2B"
 

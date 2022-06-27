@@ -164,12 +164,12 @@ async def on_message(message):
         loki.log('info', 'bot.sa', f"Grabbing a meme for {message.author}")
         request = message.content.split()[0]
         meme = db.get_img(str(request[1:]))
-        #async with aiohttp.ClientSession() as session:
-           # async with session.get(meme) as resp:
-          #      if resp.status != 200:
-               #     return await channel.send('404')
-             #   data = io.BytesIO(await resp.read())
-        await channel.send(meme)
+        async with aiohttp.ClientSession() as session:
+          async with session.get(meme) as resp:
+              if resp.status != 200:
+                 return await message.channel.send('404')
+              data = io.BytesIO(await resp.read())
+              await message.channel.send(file=discord.File(data)
         
         # if message.content.startswith('!meme'):
         #     loki.log('info', 'bot.sa', f"Sending !meme to {message.author}")
@@ -199,7 +199,7 @@ async def on_message(message):
         city = message.content[9:]
         if ' ' in city:
             city = city.replace(' ', '+')
-        weather = f"https://wttr.in/{city}_pnQ1_background=36393f.png"
+        weather = f"https://wttr.in/{city}_nQ1_background=36393f.png"
         try:
           async with aiohttp.ClientSession() as session:
             async with session.get(weather) as resp:

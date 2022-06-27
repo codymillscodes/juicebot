@@ -200,12 +200,15 @@ async def on_message(message):
         if ' ' in city:
             city = city.replace(' ', '+')
         weather = f"https://wttr.in/{city}_pnQ1_background=36393f.png"
-        async with aiohttp.ClientSession() as session:
+        try:
+          async with aiohttp.ClientSession() as session:
             async with session.get(weather) as resp:
                 if resp.status != 200:
                     return await channel.send('Something broke')
                 data = io.BytesIO(await resp.read())
                 await channel.send(file=discord.File(data, f'weather_{city}.png'))
+        except Exception as e:
+          print(e)
 #puzzle
     if any(message.content.startswith(word) for word in wordlist_puzzle):
         loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")

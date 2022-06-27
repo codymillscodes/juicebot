@@ -42,3 +42,6 @@ images_dbname = os.environ["images_dbname"]
 images_port = os.environ["images_port"]
 images_pass = os.environ["images_pass"]
 images_user = os.environ["images_user"]
+
+#1337x cf cookie
+cookie = os.environ["cookie"]

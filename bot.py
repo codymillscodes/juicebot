@@ -9,6 +9,8 @@ from bs4 import BeautifulSoup
 from hurry.filesize import size
 import io
 import aiohttp
+from urllib.parse import urlparse
+
 
 #define discord client
 intents = discord.Intents().all()
@@ -169,7 +171,8 @@ async def on_message(message):
               if resp.status != 200:
                  return await message.channel.send('404')
               data = io.BytesIO(await resp.read())
-              await message.channel.send(file=discord.File(data))
+              meme = urlparse(meme)
+              await message.channel.send(file=discord.File(data, os.path.basename(meme.path)))
         
         # if message.content.startswith('!meme'):
         #     loki.log('info', 'bot.sa', f"Sending !meme to {message.author}")

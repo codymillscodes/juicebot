@@ -53,7 +53,7 @@ def build_link_info(magnet_id):
 def search1337(query):
     loki.log('info', 'debrid.search1337x', f"Searching 1337x for {query}")
     results = torrents.search(query, sortBy="seeders", order="desc")
-    loki.log('info', 'debrid.search1337x', f"Found {len(results)} results.")
+    loki.log('info', 'debrid.search1337x', f"Found {len(results)} results. {results}")
     return results
 
 def magnet_info(torrent_id):

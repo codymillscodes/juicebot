@@ -187,18 +187,10 @@ async def on_message(message):
     if any(message.content.startswith(word) for word in wordlist_weather):
         loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")
         loki.log('info', 'bot.weather', f"Getting weather for {message.author}")
-        if(check_int(message.content[9:])):
-            arg = f'zip={message.content[9:]}'
-        else:
-            arg = f'q={message.content[9:]}'
-        loki.log('info', 'bot.weather', f"Query: {arg}")
-        weather = json.loads(requests.get(f"https://api.openweathermap.org/data/2.5/weather?{arg}&appid={config.owm_auth}&units=imperial").text)
-        em_weather = discord.Embed()
-        em_weather.set_footer(text=em_footer)
-        em_weather.set_author(name=weather['name'])
-        em_weather.description = f"Temp: {weather['main']['temp']}F | {weather['weather'][0]['description']}\nWind: {weather['wind']['speed']} | Humidity: {weather['main']['humidity']}%"
-        loki.log('info', 'bot.weather', f"Sending weather embed.")
-        await message.channel.send(embed=em_weather)
+        city = message.content[9:]
+        if ' ' in city:
+            city = city.replace(' ', '+')
+        await message.channel.send(f"https://wttr.in/{city}_pnQ0_background=36393f.png") 
 #puzzle
     if any(message.content.startswith(word) for word in wordlist_puzzle):
         loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")

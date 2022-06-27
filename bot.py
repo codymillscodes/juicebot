@@ -206,9 +206,9 @@ async def on_message(message):
                 if resp.status != 200:
                     return await channel.send('Something broke')
                 data = io.BytesIO(await resp.read())
-                await channel.send(file=discord.File(data, f'weather_{city}.png'))
+                await message.channel.send(file=discord.File(data, f'weather_{city}.png'))
         except Exception as e:
-          await channel.send(e)
+          await message.channel.send(e)
 #puzzle
     if any(message.content.startswith(word) for word in wordlist_puzzle):
         loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")

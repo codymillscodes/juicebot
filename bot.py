@@ -172,7 +172,7 @@ async def on_message(message):
                  return await message.channel.send('404')
               data = io.BytesIO(await resp.read())
               meme = urlparse(meme)
-              await message.channel.send(file=discord.File(data, os.path.basename(meme.path)))
+              await message.channel.send(file=discord.File(data, f'{os.path.basename(meme.path)}'))
         
         # if message.content.startswith('!meme'):
         #     loki.log('info', 'bot.sa', f"Sending !meme to {message.author}")

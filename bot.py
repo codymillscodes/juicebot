@@ -208,7 +208,7 @@ async def on_message(message):
                 data = io.BytesIO(await resp.read())
                 await channel.send(file=discord.File(data, f'weather_{city}.png'))
         except Exception as e:
-          print(e)
+          await channel.send(e)
 #puzzle
     if any(message.content.startswith(word) for word in wordlist_puzzle):
         loki.log('info', 'bot.on_message', f"{message.author}: {message.content}")

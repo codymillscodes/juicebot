@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 #Discord bot settings
 discord_application_id = os.environ["discord_appid"]

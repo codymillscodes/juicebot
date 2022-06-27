@@ -368,7 +368,8 @@ async def on_message(message):
             else:
                 await message.channel.send('No active torrents, bud.')
         if message.content.startswith('!search'):
-            results = await debrid.search1337(message.content[8:])['items'][:5]
+            results = debrid.search1337(message.content[8:])['items'][:5]
+            print(results[0])
             if len(results) > 0:
                 em_result = discord.Embed()
                 em_result.set_footer(text=em_footer)

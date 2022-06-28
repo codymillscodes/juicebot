@@ -450,4 +450,4 @@ async def on_message(message):
         chatbot.set_prompt(message.content.split(maxsplit=1)[1])
 client.loop.create_task(update_debrid_status())
 
-client.run(token=config.discord_bot_token, log_handler=handler, log_level=logging.DEBUG)
+client.run(token=config.discord_bot_token, log_handler=handler)

@@ -9,11 +9,13 @@ from bs4 import BeautifulSoup
 from hurry.filesize import size
 import io
 import aiohttp
-
+import logging
 
 #define discord client
 intents = discord.Intents().all()
 client = discord.Client(intents=intents)
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+
 
 @client.event
 async def on_ready():
@@ -444,4 +446,4 @@ async def on_message(message):
         chatbot.set_prompt(message.content.split(maxsplit=1)[1])
 client.loop.create_task(update_debrid_status())
 
-client.run(config.discord_bot_token)
+client.run(config.discord_bot_token, log_handler=handler, log_level=logging.DEBUG)
